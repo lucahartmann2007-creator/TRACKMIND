@@ -141,10 +141,59 @@
     .trend-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px}
     .trend-bar{width:100%;border-radius:2px 2px 0 0;min-height:2px}
     .trend-lbl{font-size:8px;color:var(--text3)}
+
+    /* Login / Register Screen */
+    .auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000}
+    .auth-box{background:var(--card);border:0.5px solid var(--border);border-radius:16px;padding:28px 24px;width:100%;max-width:360px}
+    .auth-logo{font-size:20px;font-weight:600;color:var(--text1);margin-bottom:4px}
+    .auth-logo span{color:var(--green)}
+    .auth-sub{font-size:12px;color:var(--text2);margin-bottom:20px}
+    .auth-tabs{display:flex;gap:0;margin-bottom:20px;border:0.5px solid var(--border);border-radius:8px;overflow:hidden}
+    .auth-tab{flex:1;padding:8px;font-size:13px;text-align:center;cursor:pointer;color:var(--text2);background:transparent;border:none;font-family:inherit}
+    .auth-tab.active{background:var(--green);color:#fff;font-weight:500}
+    .auth-error{background:#fff0f0;border:0.5px solid #ffcdd2;border-radius:8px;padding:8px 12px;font-size:12px;color:#c62828;margin-bottom:10px;display:none}
+    body.dark .auth-error{background:#2a1010;border-color:#5c2020;color:#ef9a9a}
+    .auth-rolle{display:flex;gap:8px;margin-bottom:10px}
+    .rolle-btn{flex:1;padding:10px 8px;border:0.5px solid var(--border);border-radius:8px;font-size:12px;text-align:center;cursor:pointer;color:var(--text2);background:var(--bg3);font-family:inherit}
+    .rolle-btn.active{border-color:var(--green);background:var(--green-bg);color:var(--green-mid);font-weight:500}
+    .user-badge{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--green-bg);border-radius:8px;font-size:11px;color:var(--green-mid);margin-bottom:8px}
+    .logout-btn{font-size:11px;color:var(--text3);cursor:pointer;padding:4px 8px;border-radius:6px;border:0.5px solid var(--border);background:transparent;font-family:inherit}
+    .logout-btn:hover{background:var(--bg3)}
   </style>
 </head>
 <body>
-<div class="app">
+
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">Track<span>Mind</span></div>
+    <div class="auth-sub">Dein Leichtathletik-Begleiter</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Einloggen</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">Registrieren</button>
+    </div>
+    <div id="auth-error" class="auth-error"></div>
+    <!-- Login Form -->
+    <div id="auth-login-form">
+      <div class="ig" style="margin-bottom:10px"><div class="il">E-Mail</div><input type="email" id="login-email" placeholder="deine@email.de"/></div>
+      <div class="ig" style="margin-bottom:14px"><div class="il">Passwort</div><input type="password" id="login-password" placeholder="••••••••"/></div>
+      <button class="btn-p" onclick="doLogin()">Einloggen</button>
+    </div>
+    <!-- Register Form -->
+    <div id="auth-register-form" style="display:none">
+      <div class="ig" style="margin-bottom:10px"><div class="il">Name</div><input type="text" id="reg-name" placeholder="Dein Name"/></div>
+      <div class="ig" style="margin-bottom:10px"><div class="il">E-Mail</div><input type="email" id="reg-email" placeholder="deine@email.de"/></div>
+      <div class="ig" style="margin-bottom:10px"><div class="il">Passwort</div><input type="password" id="reg-password" placeholder="mind. 6 Zeichen"/></div>
+      <div class="il" style="margin-bottom:6px">Ich bin...</div>
+      <div class="auth-rolle">
+        <button class="rolle-btn active" id="rolle-athlet" onclick="selectRolle('athlet')">🏃 Athlet</button>
+        <button class="rolle-btn" id="rolle-trainer" onclick="selectRolle('trainer')">📋 Trainer</button>
+      </div>
+      <button class="btn-p" onclick="doRegister()">Konto erstellen</button>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="main-app" style="display:none">
   <div class="sidebar">
     <div class="logo">
       <div>Track<span>Mind</span></div>
@@ -157,6 +206,7 @@
         </svg>
       </button>
     </div>
+    <div style="padding:8px 16px 0"><div id="user-badge" class="user-badge" style="display:none"><span id="user-name-badge">–</span><button class="logout-btn" onclick="doLogout()">Abmelden</button></div></div>
     <div class="nav-section">Athlet</div>
     <div class="nav-item active" onclick="nav('dashboard',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</div>
     <div class="nav-item" onclick="nav('eintragen',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Eintragen</div>
@@ -366,6 +416,114 @@
 
 <script>
 let results=[],anlaufNotes=[],bewertungen=[],trainerPlanText='',currentMkTab='zehn',isDark=false,alRowCount=0;
+let currentUser=null, currentSession=null, currentProfile=null, selectedRolle='athlet';
+
+// ── AUTH FUNKTIONEN ──────────────────────────────────────────────────────
+
+function switchAuthTab(tab){
+  document.getElementById('auth-login-form').style.display=tab==='login'?'block':'none';
+  document.getElementById('auth-register-form').style.display=tab==='register'?'block':'none';
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1)));
+  document.getElementById('auth-error').style.display='none';
+}
+
+function selectRolle(rolle){
+  selectedRolle=rolle;
+  document.getElementById('rolle-athlet').classList.toggle('active',rolle==='athlet');
+  document.getElementById('rolle-trainer').classList.toggle('active',rolle==='trainer');
+}
+
+function showAuthError(msg){
+  const el=document.getElementById('auth-error');
+  el.textContent=msg;el.style.display='block';
+}
+
+async function doLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const password=document.getElementById('login-password').value;
+  if(!email||!password){showAuthError('Bitte alle Felder ausfüllen.');return;}
+  const btn=document.querySelector('#auth-login-form .btn-p');
+  btn.disabled=true;btn.textContent='Wird eingeloggt...';
+  const res=await apiCall({type:'login',email,password});
+  btn.disabled=false;btn.textContent='Einloggen';
+  if(res.error){showAuthError(res.error);return;}
+  await onLoginSuccess(res);
+}
+
+async function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const password=document.getElementById('reg-password').value;
+  if(!name||!email||!password){showAuthError('Bitte alle Felder ausfüllen.');return;}
+  if(password.length<6){showAuthError('Passwort muss mind. 6 Zeichen haben.');return;}
+  const btn=document.querySelector('#auth-register-form .btn-p');
+  btn.disabled=true;btn.textContent='Wird erstellt...';
+  const res=await apiCall({type:'register',email,password,name,rolle:selectedRolle});
+  btn.disabled=false;btn.textContent='Konto erstellen';
+  if(res.error){showAuthError(res.error);return;}
+  await onLoginSuccess(res);
+}
+
+async function onLoginSuccess(res){
+  currentUser=res.user;
+  currentSession=res.session;
+  // Profil laden
+  const profile=await apiCall({type:'get_profile',user_id:currentUser.id});
+  currentProfile=profile;
+  // Badge anzeigen
+  document.getElementById('user-badge').style.display='flex';
+  document.getElementById('user-name-badge').textContent=profile.name+' ('+(profile.rolle==='trainer'?'Trainer':'Athlet')+')';
+  // Auth-Screen ausblenden, App einblenden
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('main-app').style.display='flex';
+  // Daten aus Supabase laden
+  await loadAllData();
+  updateDashboard();
+}
+
+function doLogout(){
+  currentUser=null;currentSession=null;currentProfile=null;
+  results=[];bewertungen=[];anlaufNotes=[];
+  document.getElementById('auth-screen').style.display='flex';
+  document.getElementById('main-app').style.display='none';
+  document.getElementById('user-badge').style.display='none';
+}
+
+// ── DATEN LADEN ──────────────────────────────────────────────────────────
+
+async function loadAllData(){
+  if(!currentUser)return;
+  const [ergebnisse,bwData,anlaufData]=await Promise.all([
+    apiCall({type:'get_ergebnisse',nutzer_id:currentUser.id}),
+    apiCall({type:'get_bewertungen',nutzer_id:currentUser.id}),
+    apiCall({type:'get_anlaeufe',nutzer_id:currentUser.id}),
+  ]);
+  if(Array.isArray(ergebnisse)) results=ergebnisse.map(r=>({
+    disc:r.disziplin,result:r.ergebnis,type:r.typ,ak:r.altersklasse,date:r.datum,notes:r.notizen,id:r.id
+  }));
+  if(Array.isArray(bwData)) bewertungen=bwData.map(b=>({
+    datum:b.datum,disziplin:b.disziplin,belastung:b.belastung,energie:b.energie,gefuehl:b.gefuehl,notiz:b.notiz,id:b.id
+  }));
+  if(Array.isArray(anlaufData)){
+    // Anläufe nach Disziplin gruppieren
+    const grouped={};
+    anlaufData.forEach(a=>{
+      if(!grouped[a.disziplin])grouped[a.disziplin]={disc:a.disziplin,entries:[]};
+      grouped[a.disziplin].entries.push({type:a.typ,steps:a.schritte,note:a.notiz});
+    });
+    anlaufNotes=Object.values(grouped);
+  }
+  renderEtList();renderBewertungen();renderAlList();
+}
+
+// ── API HELPER ───────────────────────────────────────────────────────────
+
+async function apiCall(body){
+  const headers={'Content-Type':'application/json'};
+  if(currentSession)headers['Authorization']='Bearer '+currentSession.access_token;
+  const res=await fetch('/api/claude',{method:'POST',headers,body:JSON.stringify(body)});
+  return res.json();
+}
 
 const IAAF_ZEHN={'100m':{A:25.4347,B:18.0,C:1.81,t:true},'Weitsprung':{A:0.14354,B:220,C:1.40,t:false},'Kugelstoß':{A:51.39,B:1.5,C:1.05,t:false},'Hochsprung':{A:0.8465,B:75.0,C:1.42,t:false},'400m':{A:1.53775,B:82.0,C:1.81,t:true},'110m Hürden':{A:5.74352,B:28.5,C:1.92,t:true},'Diskuswurf':{A:12.91,B:4.0,C:1.10,t:false},'Stabhochsprung':{A:0.2797,B:100,C:1.35,t:false},'Speerwurf':{A:10.14,B:7.0,C:1.08,t:false},'1500m':{A:0.03768,B:480,C:1.85,t:true}};
 const IAAF_SIEBEN={'100m Hürden':{A:9.23076,B:26.7,C:1.835,t:true},'Hochsprung':{A:1.84523,B:75.0,C:1.348,t:false},'Kugelstoß':{A:56.0211,B:1.5,C:1.05,t:false},'200m':{A:4.99087,B:42.5,C:1.81,t:true},'Weitsprung':{A:0.188807,B:210,C:1.41,t:false},'Speerwurf':{A:15.9803,B:3.8,C:1.04,t:false},'800m':{A:0.11193,B:254,C:1.88,t:true}};
@@ -415,16 +573,21 @@ function updateMkTotal(){
   document.getElementById('et-mk-total').textContent=t;
 }
 
-function saveResult(){
-  const disc=document.getElementById('et-disc').value,type=document.getElementById('et-type').value,ak=document.getElementById('et-ak').value,date=document.getElementById('et-date').value||'heute',notes=document.getElementById('et-notes').value.trim();
+async function saveResult(){
+  const disc=document.getElementById('et-disc').value,type=document.getElementById('et-type').value,ak=document.getElementById('et-ak').value,date=document.getElementById('et-date').value||new Date().toISOString().split('T')[0],notes=document.getElementById('et-notes').value.trim();
   const isM=disc==='Zehnkampf'||disc==='Siebenkampf';
+  const toSave=[];
   if(isM){
-    results.push({disc,type,result:document.getElementById('et-mk-total').textContent+' Pkt',date,ak,notes});
-    document.querySelectorAll('.mk-val').forEach(i=>{const v=i.value.trim();if(v)results.push({disc:i.dataset.disc,type,result:v,date,ak,notes:'Aus '+disc});});
+    toSave.push({disc,type,result:document.getElementById('et-mk-total').textContent+' Pkt',date,ak,notes});
+    document.querySelectorAll('.mk-val').forEach(i=>{const v=i.value.trim();if(v)toSave.push({disc:i.dataset.disc,type,result:v,date,ak,notes:'Aus '+disc});});
   } else {
     const r=document.getElementById('et-result').value.trim();
     if(!r){alert('Bitte Ergebnis eingeben.');return;}
-    results.push({disc,type,result:r,date,ak,notes});
+    toSave.push({disc,type,result:r,date,ak,notes});
+  }
+  for(const e of toSave){
+    results.push(e);
+    if(currentUser) await apiCall({type:'save_ergebnis',nutzer_id:currentUser.id,disziplin:e.disc,ergebnis:e.result,typ:e.type,altersklasse:e.ak,datum:e.date,notizen:e.notes});
   }
   document.getElementById('et-result').value='';document.getElementById('et-notes').value='';
   document.querySelectorAll('.mk-val').forEach(i=>i.value='');
@@ -598,6 +761,7 @@ function saveBewertung(){
     notiz:document.getElementById('bw-notes').value.trim()
   };
   bewertungen.push(b);
+  if(currentUser) await apiCall({type:'save_bewertung',nutzer_id:currentUser.id,...b});
   document.getElementById('bw-notes').value='';
   document.getElementById('bw-belastung').value=5;document.getElementById('bw-belastung-val').textContent='5';
   document.getElementById('bw-energie').value=5;document.getElementById('bw-energie-val').textContent='5';
@@ -648,8 +812,8 @@ function renderBewertungen(){
 }
 
 async function callClaude(prompt){
-  const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
-  const d=await res.json();return d.content?.[0]?.text||'Fehler.';
+  const d=await apiCall({type:'claude',model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]});
+  return d.content?.[0]?.text||'Fehler.';
 }
 function setLoad(el,btn,on,msg='KI analysiert...'){
   if(on){el.innerHTML=`<span class="spin"></span>${msg}`;if(btn)btn.disabled=true;}else{if(btn)btn.disabled=false;}
@@ -659,47 +823,5 @@ document.getElementById('et-date').valueAsDate=new Date();
 document.getElementById('bw-date').valueAsDate=new Date();
 addAlRow();buildRechnerFields();renderBewertungen();
 </script>
-</body>
-</html>
-<p class="p4"><span class="s3"></span><br></p>
-<p class="p5"><span class="s4">Dashboard</span></p>
-<p class="p6"><span class="s3"></span><br></p>
-<p class="p7"><span class="s1">Eintragen</span></p>
-<p class="p6"><span class="s3"></span><br></p>
-<p class="p7"><span class="s1">Anläufe</span></p>
-<p class="p6"><span class="s3"></span><br></p>
-<p class="p7"><span class="s1">Analyse</span></p>
-<p class="p3"><span class="s1">TRAINING</span></p>
-<p class="p6"><span class="s3"></span><br></p>
-<p class="p7"><span class="s1">Trainingsplan</span></p>
-<p class="p6"><span class="s3"></span><br></p>
-<p class="p7"><span class="s1">Einheit bewerten</span></p>
-<p class="p6"><span class="s3"></span><br></p>
-<p class="p7"><span class="s1">Plan hochladen</span></p>
-<p class="p3"><span class="s1">TOOLS</span></p>
-<p class="p6"><span class="s3"></span><br></p>
-<p class="p8"><span class="s3">Mehrkampfrechner</span></p>
-<p class="p1"><span class="s5">Dashboard</span></p>
-<p class="p9"><span class="s5">Deine aktuelle Saison</span></p>
-<p class="p10"><span class="s6">Einträge</span></p>
-<p class="p11"><span class="s6">0</span></p>
-<p class="p12"><span class="s6">Ergebnisse</span></p>
-<p class="p10"><span class="s6">Bestes Ergebnis</span></p>
-<p class="p11"><span class="s6">–</span></p>
-<p class="p12"><span class="s6">kein Eintrag</span></p>
-<p class="p10"><span class="s6">Letzte Disziplin</span></p>
-<p class="p13"><span class="s6">–</span></p>
-<p class="p12"><span class="s6">–</span></p>
-<p class="p10"><span class="s6">Ø Belastung (7 Tage)</span></p>
-<p class="p11"><span class="s6">–</span></p>
-<p class="p12"><span class="s6">von 10</span></p>
-<p class="p10"><span class="s6">Ø Energie (7 Tage)</span></p>
-<p class="p11"><span class="s6">–</span></p>
-<p class="p12"><span class="s6">von 10</span></p>
-<p class="p10"><span class="s6">Einheiten bewertet</span></p>
-<p class="p11"><span class="s6">0</span></p>
-<p class="p12"><span class="s6">gesamt</span></p>
-<p class="p13"><span class="s1">Letzte Ergebnisse</span></p>
-<p class="p14"><span class="s1">Noch keine Ergebnisse.</span></p>
 </body>
 </html>

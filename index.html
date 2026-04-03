@@ -758,7 +758,7 @@ function updateBwColor(id,val){
   document.getElementById(id.replace('bw-','bw-')+'').style.color=colors[v-1]||'var(--green)';
 }
 
-function saveBewertung(){
+async function saveBewertung(){
   const disc=document.getElementById('bw-disc').value;
   const date=document.getElementById('bw-date').value;
   if(!date){alert('Bitte Datum auswählen.');return;}

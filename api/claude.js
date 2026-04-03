@@ -1,164 +1,157 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { type, ...body } = req.body;
+  const body = req.body || {};
+  const type = body.type;
 
-  // ── ANTHROPIC (KI-Anfragen) ──────────────────────────────────────────────
-  if (type === 'claude' || !type) {
+  // ── ANTHROPIC ──────────────────────────────────────────────────────────
+  if (type === "claude" || !type) {
     const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) return res.status(500).json({ error: 'API key not configured' });
+    if (!apiKey) return res.status(500).json({ error: "API key not configured" });
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
+      const { type: _t, ...rest } = body;
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(rest),
       });
       const data = await response.json();
       return res.status(response.status).json(data);
-    } catch (error) {
-      return res.status(500).json({ error: 'Claude request failed' });
+    } catch (e) {
+      return res.status(500).json({ error: "Claude request failed: " + e.message });
     }
   }
 
-  // ── SUPABASE (Datenbank-Anfragen) ────────────────────────────────────────
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseSecret = process.env.SUPABASE_SECRET_KEY;
-  if (!supabaseUrl || !supabaseSecret) {
-    return res.status(500).json({ error: 'Supabase not configured' });
+  // ── SUPABASE HELPER ────────────────────────────────────────────────────
+  const SUPA_URL = process.env.SUPABASE_URL;
+  const SUPA_KEY = process.env.SUPABASE_SECRET_KEY;
+  if (!SUPA_URL || !SUPA_KEY) return res.status(500).json({ error: "Supabase not configured" });
+
+  const authHeader = req.headers["authorization"] || "";
+  const userToken = authHeader.replace("Bearer ", "").trim();
+
+  async function supa(path, method, payload, useUserToken) {
+    const headers = {
+      "Content-Type": "application/json",
+      "apikey": SUPA_KEY,
+      "Authorization": useUserToken && userToken ? "Bearer " + userToken : "Bearer " + SUPA_KEY,
+      "Prefer": method === "POST" ? "return=representation" : "",
+    };
+    const opts = { method, headers };
+    if (payload && (method === "POST" || method === "PATCH")) opts.body = JSON.stringify(payload);
+    const r = await fetch(SUPA_URL + path, opts);
+    const text = await r.text();
+    try { return { ok: r.ok, status: r.status, data: JSON.parse(text) }; }
+    catch { return { ok: r.ok, status: r.status, data: text }; }
   }
 
-  // Nutzer-Token aus dem Authorization-Header lesen
-  const authHeader = req.headers.authorization || '';
-  const userToken = authHeader.replace('Bearer ', '');
+  async function supaAuth(path, payload) {
+    const r = await fetch(SUPA_URL + "/auth/v1" + path, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPA_KEY,
+      },
+      body: JSON.stringify(payload),
+    });
+    const text = await r.text();
+    try { return { ok: r.ok, status: r.status, data: JSON.parse(text) }; }
+    catch { return { ok: r.ok, status: r.status, data: text }; }
+  }
 
-  // Supabase-Client mit dem Secret Key (Server-seitig, voller Zugriff)
-  // aber wir setzen den User-Token damit RLS greift
-  const supabase = createClient(supabaseUrl, supabaseSecret, {
-    global: { headers: { Authorization: `Bearer ${userToken}` } }
-  });
-
-  // ── AUTH: Registrieren ───────────────────────────────────────────────────
-  if (type === 'register') {
+  // ── REGISTER ───────────────────────────────────────────────────────────
+  if (type === "register") {
     const { email, password, name, rolle } = body;
     try {
-      // 1. Nutzer in Auth erstellen
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email, password,
-      });
-      if (authError) return res.status(400).json({ error: authError.message });
-
-      // 2. Profil in der profile-Tabelle anlegen
-      const { error: profileError } = await supabase
-        .from('profile')
-        .insert({ id: authData.user.id, name, rolle });
-      if (profileError) return res.status(400).json({ error: profileError.message });
-
-      return res.status(200).json({ user: authData.user, session: authData.session });
+      const auth = await supaAuth("/signup", { email, password });
+      if (!auth.ok) return res.status(400).json({ error: auth.data.msg || auth.data.error_description || "Registrierung fehlgeschlagen" });
+      const userId = auth.data.user?.id;
+      if (!userId) return res.status(400).json({ error: "Kein User erstellt" });
+      // Kurz warten damit Auth-User propagiert
+      await new Promise(r => setTimeout(r, 500));
+      const prof = await supa("/rest/v1/profile", "POST", { id: userId, name, rolle }, false);
+      if (!prof.ok) return res.status(400).json({ error: "Profil konnte nicht erstellt werden: " + JSON.stringify(prof.data) });
+      return res.status(200).json({ user: auth.data.user, session: auth.data.session });
     } catch (e) {
       return res.status(500).json({ error: e.message });
     }
   }
 
-  // ── AUTH: Einloggen ──────────────────────────────────────────────────────
-  if (type === 'login') {
+  // ── LOGIN ──────────────────────────────────────────────────────────────
+  if (type === "login") {
     const { email, password } = body;
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) return res.status(400).json({ error: error.message });
-      return res.status(200).json({ user: data.user, session: data.session });
+      const auth = await supaAuth("/token?grant_type=password", { email, password });
+      if (!auth.ok) return res.status(400).json({ error: auth.data.error_description || auth.data.msg || "Login fehlgeschlagen" });
+      return res.status(200).json({ user: auth.data.user, session: { access_token: auth.data.access_token } });
     } catch (e) {
       return res.status(500).json({ error: e.message });
     }
   }
 
-  // ── PROFIL laden ─────────────────────────────────────────────────────────
-  if (type === 'get_profile') {
+  // ── GET PROFILE ────────────────────────────────────────────────────────
+  if (type === "get_profile") {
     const { user_id } = body;
-    const { data, error } = await supabase
-      .from('profile')
-      .select('*')
-      .eq('id', user_id)
-      .single();
-    if (error) return res.status(400).json({ error: error.message });
-    return res.status(200).json(data);
+    const r = await supa("/rest/v1/profile?id=eq." + user_id + "&select=*", "GET", null, true);
+    if (!r.ok) return res.status(400).json({ error: JSON.stringify(r.data) });
+    return res.status(200).json(Array.isArray(r.data) ? r.data[0] : r.data);
   }
 
-  // ── ERGEBNISSE: speichern ────────────────────────────────────────────────
-  if (type === 'save_ergebnis') {
+  // ── SAVE ERGEBNIS ──────────────────────────────────────────────────────
+  if (type === "save_ergebnis") {
     const { nutzer_id, disziplin, ergebnis, typ, altersklasse, datum, notizen } = body;
-    const { data, error } = await supabase
-      .from('ergebnisse')
-      .insert({ nutzer_id, disziplin, ergebnis, typ, altersklasse, datum, notizen })
-      .select();
-    if (error) return res.status(400).json({ error: error.message });
-    return res.status(200).json(data);
+    const r = await supa("/rest/v1/ergebnisse", "POST", { nutzer_id, disziplin, ergebnis, typ, altersklasse, datum, notizen }, true);
+    if (!r.ok) return res.status(400).json({ error: JSON.stringify(r.data) });
+    return res.status(200).json(r.data);
   }
 
-  // ── ERGEBNISSE: laden ────────────────────────────────────────────────────
-  if (type === 'get_ergebnisse') {
+  // ── GET ERGEBNISSE ─────────────────────────────────────────────────────
+  if (type === "get_ergebnisse") {
     const { nutzer_id } = body;
-    const { data, error } = await supabase
-      .from('ergebnisse')
-      .select('*')
-      .eq('nutzer_id', nutzer_id)
-      .order('datum', { ascending: false });
-    if (error) return res.status(400).json({ error: error.message });
-    return res.status(200).json(data);
+    const r = await supa("/rest/v1/ergebnisse?nutzer_id=eq." + nutzer_id + "&order=datum.desc&select=*", "GET", null, true);
+    if (!r.ok) return res.status(400).json({ error: JSON.stringify(r.data) });
+    return res.status(200).json(r.data);
   }
 
-  // ── BEWERTUNGEN: speichern ───────────────────────────────────────────────
-  if (type === 'save_bewertung') {
+  // ── SAVE BEWERTUNG ─────────────────────────────────────────────────────
+  if (type === "save_bewertung") {
     const { nutzer_id, datum, disziplin, belastung, energie, gefuehl, notiz } = body;
-    const { data, error } = await supabase
-      .from('bewertungen')
-      .insert({ nutzer_id, datum, disziplin, belastung, energie, gefuehl, notiz })
-      .select();
-    if (error) return res.status(400).json({ error: error.message });
-    return res.status(200).json(data);
+    const r = await supa("/rest/v1/bewertungen", "POST", { nutzer_id, datum, disziplin, belastung, energie, gefuehl, notiz }, true);
+    if (!r.ok) return res.status(400).json({ error: JSON.stringify(r.data) });
+    return res.status(200).json(r.data);
   }
 
-  // ── BEWERTUNGEN: laden ───────────────────────────────────────────────────
-  if (type === 'get_bewertungen') {
+  // ── GET BEWERTUNGEN ────────────────────────────────────────────────────
+  if (type === "get_bewertungen") {
     const { nutzer_id } = body;
-    const { data, error } = await supabase
-      .from('bewertungen')
-      .select('*')
-      .eq('nutzer_id', nutzer_id)
-      .order('datum', { ascending: false });
-    if (error) return res.status(400).json({ error: error.message });
-    return res.status(200).json(data);
+    const r = await supa("/rest/v1/bewertungen?nutzer_id=eq." + nutzer_id + "&order=datum.desc&select=*", "GET", null, true);
+    if (!r.ok) return res.status(400).json({ error: JSON.stringify(r.data) });
+    return res.status(200).json(r.data);
   }
 
-  // ── ANLÄUFE: speichern ───────────────────────────────────────────────────
-  if (type === 'save_anlauf') {
+  // ── SAVE ANLAUF ────────────────────────────────────────────────────────
+  if (type === "save_anlauf") {
     const { nutzer_id, disziplin, typ: anlaufTyp, schritte, notiz } = body;
-    const { data, error } = await supabase
-      .from('anlaeufe')
-      .insert({ nutzer_id, disziplin, typ: anlaufTyp, schritte, notiz })
-      .select();
-    if (error) return res.status(400).json({ error: error.message });
-    return res.status(200).json(data);
+    const r = await supa("/rest/v1/anlaeufe", "POST", { nutzer_id, disziplin, typ: anlaufTyp, schritte, notiz }, true);
+    if (!r.ok) return res.status(400).json({ error: JSON.stringify(r.data) });
+    return res.status(200).json(r.data);
   }
 
-  // ── ANLÄUFE: laden ───────────────────────────────────────────────────────
-  if (type === 'get_anlaeufe') {
+  // ── GET ANLAEUFE ───────────────────────────────────────────────────────
+  if (type === "get_anlaeufe") {
     const { nutzer_id } = body;
-    const { data, error } = await supabase
-      .from('anlaeufe')
-      .select('*')
-      .eq('nutzer_id', nutzer_id)
-      .order('created_at', { ascending: false });
-    if (error) return res.status(400).json({ error: error.message });
-    return res.status(200).json(data);
+    const r = await supa("/rest/v1/anlaeufe?nutzer_id=eq." + nutzer_id + "&order=created_at.desc&select=*", "GET", null, true);
+    if (!r.ok) return res.status(400).json({ error: JSON.stringify(r.data) });
+    return res.status(200).json(r.data);
   }
 
-  return res.status(400).json({ error: 'Unknown request type' });
+  return res.status(400).json({ error: "Unknown type: " + type });
 }

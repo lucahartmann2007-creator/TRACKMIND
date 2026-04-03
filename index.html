@@ -176,7 +176,7 @@
     <div id="auth-login-form">
       <div class="ig" style="margin-bottom:10px"><div class="il">E-Mail</div><input type="email" id="login-email" placeholder="deine@email.de"/></div>
       <div class="ig" style="margin-bottom:14px"><div class="il">Passwort</div><input type="password" id="login-password" placeholder="••••••••"/></div>
-      <button class="btn-p" onclick="doLogin()">Einloggen</button>
+      <button class="btn-p" id="login-btn" onclick="doLogin()">Einloggen</button>
     </div>
     <!-- Register Form -->
     <div id="auth-register-form" style="display:none">
@@ -188,7 +188,7 @@
         <button class="rolle-btn active" id="rolle-athlet" onclick="selectRolle('athlet')">🏃 Athlet</button>
         <button class="rolle-btn" id="rolle-trainer" onclick="selectRolle('trainer')">📋 Trainer</button>
       </div>
-      <button class="btn-p" onclick="doRegister()">Konto erstellen</button>
+      <button class="btn-p" id="register-btn" onclick="doRegister()">Konto erstellen</button>
     </div>
   </div>
 </div>
@@ -444,12 +444,16 @@ async function doLogin(){
   const email=document.getElementById('login-email').value.trim();
   const password=document.getElementById('login-password').value;
   if(!email||!password){showAuthError('Bitte alle Felder ausfüllen.');return;}
-  const btn=document.querySelector('#auth-login-form .btn-p');
+  const btn=document.getElementById('login-btn');
   btn.disabled=true;btn.textContent='Wird eingeloggt...';
-  const res=await apiCall({type:'login',email,password});
-  btn.disabled=false;btn.textContent='Einloggen';
-  if(res.error){showAuthError(res.error);return;}
-  await onLoginSuccess(res);
+  try{
+    const res=await apiCall({type:'login',email,password});
+    if(res.error){showAuthError(res.error);btn.disabled=false;btn.textContent='Einloggen';return;}
+    await onLoginSuccess(res);
+  }catch(e){
+    showAuthError('Verbindungsfehler: '+e.message);
+    btn.disabled=false;btn.textContent='Einloggen';
+  }
 }
 
 async function doRegister(){
@@ -458,12 +462,16 @@ async function doRegister(){
   const password=document.getElementById('reg-password').value;
   if(!name||!email||!password){showAuthError('Bitte alle Felder ausfüllen.');return;}
   if(password.length<6){showAuthError('Passwort muss mind. 6 Zeichen haben.');return;}
-  const btn=document.querySelector('#auth-register-form .btn-p');
+  const btn=document.getElementById('register-btn');
   btn.disabled=true;btn.textContent='Wird erstellt...';
-  const res=await apiCall({type:'register',email,password,name,rolle:selectedRolle});
-  btn.disabled=false;btn.textContent='Konto erstellen';
-  if(res.error){showAuthError(res.error);return;}
-  await onLoginSuccess(res);
+  try{
+    const res=await apiCall({type:'register',email,password,name,rolle:selectedRolle});
+    if(res.error){showAuthError(res.error);btn.disabled=false;btn.textContent='Konto erstellen';return;}
+    await onLoginSuccess(res);
+  }catch(e){
+    showAuthError('Verbindungsfehler: '+e.message);
+    btn.disabled=false;btn.textContent='Konto erstellen';
+  }
 }
 
 async function onLoginSuccess(res){

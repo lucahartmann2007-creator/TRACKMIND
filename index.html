@@ -160,6 +160,7 @@
     .logout-btn{font-size:11px;color:var(--text3);cursor:pointer;padding:4px 8px;border-radius:6px;border:0.5px solid var(--border);background:transparent;font-family:inherit}
     .logout-btn:hover{background:var(--bg3)}
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
@@ -417,6 +418,15 @@
 <script>
 let results=[],anlaufNotes=[],bewertungen=[],trainerPlanText='',currentMkTab='zehn',isDark=false,alRowCount=0;
 let currentUser=null, currentSession=null, currentProfile=null, selectedRolle='athlet';
+let supabaseClient=null;
+
+function initSupabase(){
+  const url = 'https://vpfxcdjagqtgduieyunr.supabase.co';
+  const key = 'sb_publishable_fLMpBCUkFIN4YlEoEZ3ZAg_g5rieJJI';
+  if(window.supabase && url && key && key !== 'SUPABASE_PUBLISHABLE_KEY_PLACEHOLDER'){
+    supabaseClient = window.supabase.createClient(url, key);
+  }
+}
 
 // ── AUTH FUNKTIONEN ──────────────────────────────────────────────────────
 
@@ -447,11 +457,15 @@ async function doLogin(){
   const btn=document.getElementById('login-btn');
   btn.disabled=true;btn.textContent='Wird eingeloggt...';
   try{
-    const res=await apiCall({type:'login',email,password});
-    if(res.error){showAuthError(res.error);btn.disabled=false;btn.textContent='Einloggen';return;}
-    await onLoginSuccess(res);
+    if(!supabaseClient){showAuthError('Supabase nicht initialisiert.');btn.disabled=false;btn.textContent='Einloggen';return;}
+    const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+    if(error){showAuthError(error.message);btn.disabled=false;btn.textContent='Einloggen';return;}
+    currentUser=data.user;currentSession=data.session;
+    const {data:prof}=await supabaseClient.from('profile').select('*').eq('id',data.user.id).single();
+    currentProfile=prof;
+    await onLoginSuccess({user:data.user,session:data.session,profile:prof});
   }catch(e){
-    showAuthError('Verbindungsfehler: '+e.message);
+    showAuthError('Fehler: '+e.message);
     btn.disabled=false;btn.textContent='Einloggen';
   }
 }
@@ -465,11 +479,22 @@ async function doRegister(){
   const btn=document.getElementById('register-btn');
   btn.disabled=true;btn.textContent='Wird erstellt...';
   try{
-    const res=await apiCall({type:'register',email,password,name,rolle:selectedRolle});
-    if(res.error){showAuthError(res.error);btn.disabled=false;btn.textContent='Konto erstellen';return;}
-    await onLoginSuccess(res);
+    if(!supabaseClient){showAuthError('Supabase nicht initialisiert.');btn.disabled=false;btn.textContent='Konto erstellen';return;}
+    const {data,error}=await supabaseClient.auth.signUp({email,password});
+    if(error){showAuthError(error.message);btn.disabled=false;btn.textContent='Konto erstellen';return;}
+    const userId=data.user?.id;
+    if(!userId){showAuthError('Kein User erstellt.');btn.disabled=false;btn.textContent='Konto erstellen';return;}
+    // Profil anlegen
+    const {error:profErr}=await supabaseClient.from('profile').insert({id:userId,name,rolle:selectedRolle});
+    if(profErr){showAuthError('Profil-Fehler: '+profErr.message);btn.disabled=false;btn.textContent='Konto erstellen';return;}
+    // Direkt einloggen
+    const {data:loginData,error:loginErr}=await supabaseClient.auth.signInWithPassword({email,password});
+    if(loginErr){showAuthError('Registriert! Bitte einloggen.');btn.disabled=false;btn.textContent='Konto erstellen';return;}
+    currentUser=loginData.user;currentSession=loginData.session;
+    currentProfile={id:userId,name,rolle:selectedRolle};
+    await onLoginSuccess({user:loginData.user,session:loginData.session,profile:currentProfile});
   }catch(e){
-    showAuthError('Verbindungsfehler: '+e.message);
+    showAuthError('Fehler: '+e.message);
     btn.disabled=false;btn.textContent='Konto erstellen';
   }
 }
@@ -477,12 +502,12 @@ async function doRegister(){
 async function onLoginSuccess(res){
   currentUser=res.user;
   currentSession=res.session;
-  // Profil laden
-  const profile=await apiCall({type:'get_profile',user_id:currentUser.id});
-  currentProfile=profile;
+  if(res.profile) currentProfile=res.profile;
   // Badge anzeigen
+  const name=currentProfile?.name||currentUser.email;
+  const rolle=currentProfile?.rolle||'athlet';
   document.getElementById('user-badge').style.display='flex';
-  document.getElementById('user-name-badge').textContent=profile.name+' ('+(profile.rolle==='trainer'?'Trainer':'Athlet')+')';
+  document.getElementById('user-name-badge').textContent=name+' ('+(rolle==='trainer'?'Trainer':'Athlet')+')';
   // Auth-Screen ausblenden, App einblenden
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('main-app').style.display='flex';
@@ -502,11 +527,11 @@ function doLogout(){
 // ── DATEN LADEN ──────────────────────────────────────────────────────────
 
 async function loadAllData(){
-  if(!currentUser)return;
-  const [ergebnisse,bwData,anlaufData]=await Promise.all([
-    apiCall({type:'get_ergebnisse',nutzer_id:currentUser.id}),
-    apiCall({type:'get_bewertungen',nutzer_id:currentUser.id}),
-    apiCall({type:'get_anlaeufe',nutzer_id:currentUser.id}),
+  if(!currentUser||!supabaseClient)return;
+  const [{data:ergebnisse},{data:bwData},{data:anlaufData}]=await Promise.all([
+    supabaseClient.from('ergebnisse').select('*').eq('nutzer_id',currentUser.id).order('datum',{ascending:false}),
+    supabaseClient.from('bewertungen').select('*').eq('nutzer_id',currentUser.id).order('datum',{ascending:false}),
+    supabaseClient.from('anlaeufe').select('*').eq('nutzer_id',currentUser.id).order('created_at',{ascending:false}),
   ]);
   if(Array.isArray(ergebnisse)) results=ergebnisse.map(r=>({
     disc:r.disziplin,result:r.ergebnis,type:r.typ,ak:r.altersklasse,date:r.datum,notes:r.notizen,id:r.id
@@ -597,7 +622,7 @@ async function saveResult(){
   }
   for(const e of toSave){
     results.push(e);
-    if(currentUser) await apiCall({type:'save_ergebnis',nutzer_id:currentUser.id,disziplin:e.disc,ergebnis:e.result,typ:e.type,altersklasse:e.ak,datum:e.date,notizen:e.notes});
+    if(currentUser&&supabaseClient) await supabaseClient.from('ergebnisse').insert({nutzer_id:currentUser.id,disziplin:e.disc,ergebnis:e.result,typ:e.type,altersklasse:e.ak,datum:e.date,notizen:e.notes});
   }
   document.getElementById('et-result').value='';document.getElementById('et-notes').value='';
   document.querySelectorAll('.mk-val').forEach(i=>i.value='');
@@ -771,7 +796,7 @@ async function saveBewertung(){
     notiz:document.getElementById('bw-notes').value.trim()
   };
   bewertungen.push(b);
-  if(currentUser) await apiCall({type:'save_bewertung',nutzer_id:currentUser.id,...b});
+  if(currentUser&&supabaseClient) await supabaseClient.from('bewertungen').insert({nutzer_id:currentUser.id,datum:b.datum,disziplin:b.disziplin,belastung:b.belastung,energie:b.energie,gefuehl:b.gefuehl,notiz:b.notiz});
   document.getElementById('bw-notes').value='';
   document.getElementById('bw-belastung').value=5;document.getElementById('bw-belastung-val').textContent='5';
   document.getElementById('bw-energie').value=5;document.getElementById('bw-energie-val').textContent='5';
@@ -829,6 +854,7 @@ function setLoad(el,btn,on,msg='KI analysiert...'){
   if(on){el.innerHTML=`<span class="spin"></span>${msg}`;if(btn)btn.disabled=true;}else{if(btn)btn.disabled=false;}
 }
 
+initSupabase();
 document.getElementById('et-date').valueAsDate=new Date();
 document.getElementById('bw-date').valueAsDate=new Date();
 addAlRow();buildRechnerFields();renderBewertungen();

@@ -168,8 +168,8 @@
     <div class="auth-logo">Track<span>Mind</span></div>
     <div class="auth-sub">Dein Leichtathletik-Begleiter</div>
     <div class="auth-tabs">
-      <button class="auth-tab atab active" onclick="switchAuthTab('login')">Einloggen</button>
-      <button class="auth-tab atab" onclick="switchAuthTab('register')">Registrieren</button>
+      <button id="atab-login" class="auth-tab atab active" onclick="switchAuthTab('login')">Einloggen</button>
+      <button id="atab-register" class="auth-tab atab" onclick="switchAuthTab('register')">Registrieren</button>
     </div>
     <div id="auth-error" class="auth-error"></div>
     <!-- Login Form -->
@@ -421,10 +421,12 @@ let currentUser=null, currentSession=null, currentProfile=null, selectedRolle='a
 // ── AUTH FUNKTIONEN ──────────────────────────────────────────────────────
 
 function switchAuthTab(tab){
-  document.getElementById('auth-login-form').style.display=tab==='login'?'block':'none';
-  document.getElementById('auth-register-form').style.display=tab==='register'?'block':'none';
-  document.querySelectorAll('.atab').forEach((t,i)=>t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1)));
-  document.getElementById('auth-error').style.display='none';
+  const isLogin = tab==='login';
+  document.getElementById('auth-login-form').style.display = isLogin ? 'block' : 'none';
+  document.getElementById('auth-register-form').style.display = isLogin ? 'none' : 'block';
+  document.getElementById('atab-login').classList.toggle('active', isLogin);
+  document.getElementById('atab-register').classList.toggle('active', !isLogin);
+  document.getElementById('auth-error').style.display = 'none';
 }
 
 function selectRolle(rolle){

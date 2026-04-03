@@ -54,17 +54,24 @@ export default async function handler(req, res) {
   }
 
   async function supaAuth(path, payload) {
-    const r = await fetch(SUPA_URL + "/auth/v1" + path, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "apikey": SUPA_KEY,
-      },
-      body: JSON.stringify(payload),
-    });
+    const url = SUPA_URL + "/auth/v1" + path;
+    let r;
+    try {
+      r = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPA_KEY,
+          "Authorization": "Bearer " + SUPA_KEY,
+        },
+        body: JSON.stringify(payload),
+      });
+    } catch(fetchErr) {
+      return { ok: false, status: 0, data: { msg: "fetch failed: " + fetchErr.message + " | URL: " + url } };
+    }
     const text = await r.text();
     try { return { ok: r.ok, status: r.status, data: JSON.parse(text) }; }
-    catch { return { ok: r.ok, status: r.status, data: text }; }
+    catch { return { ok: r.ok, status: r.status, data: { msg: text } }; }
   }
 
   // ── REGISTER ───────────────────────────────────────────────────────────
@@ -72,7 +79,7 @@ export default async function handler(req, res) {
     const { email, password, name, rolle } = body;
     try {
       const auth = await supaAuth("/signup", { email, password });
-      if (!auth.ok) return res.status(400).json({ error: auth.data.msg || auth.data.error_description || "Registrierung fehlgeschlagen" });
+      if (!auth.ok) return res.status(400).json({ error: auth.data.msg || auth.data.error_description || auth.data.message || JSON.stringify(auth.data) });
       const userId = auth.data.user?.id;
       if (!userId) return res.status(400).json({ error: "Kein User erstellt" });
       // Kurz warten damit Auth-User propagiert

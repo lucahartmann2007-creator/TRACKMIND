@@ -1,489 +1,78 @@
-<!DOCTYPE html>
-<html lang="de">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TrackMind</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text1);transition:background 0.2s,color 0.2s}
-
-    :root{
-      --bg:#f5f5f3;--bg2:#ffffff;--bg3:#eeeeec;
-      --text1:#1a1a1a;--text2:#666;--text3:#aaa;
-      --border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.15);
-      --green:#1D9E75;--green-bg:#eaf7f2;--green-text:#085041;
-      --green-border:#a8e4cf;--green-mid:#0F6E56;--card:#ffffff;
-    }
-    body.dark{
-      --bg:#181818;--bg2:#202020;--bg3:#2a2a2a;
-      --text1:#efefef;--text2:#999;--text3:#555;
-      --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
-      --green-bg:#0d2b21;--green-text:#5DCAA5;
-      --green-border:#1a5c45;--green-mid:#1D9E75;--card:#202020;
-    }
-
-    .app{display:flex;height:100vh;overflow:hidden}
-    .sidebar{width:190px;background:var(--bg2);border-right:0.5px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
-    .logo{font-size:16px;font-weight:600;color:var(--text1);padding:16px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-    .logo span{color:var(--green)}
-    .mode-btn{width:28px;height:28px;border-radius:7px;background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;border:none;flex-shrink:0}
-    .nav-section{font-size:10px;color:var(--text3);padding:10px 16px 4px;text-transform:uppercase;letter-spacing:0.05em}
-    .nav-item{display:flex;align-items:center;gap:9px;padding:10px 16px;font-size:13px;color:var(--text2);cursor:pointer;border-left:2px solid transparent;transition:background 0.1s}
-    .nav-item:hover{background:var(--bg3)}
-    .nav-item.active{color:var(--green-mid);background:var(--green-bg);border-left-color:var(--green);font-weight:500}
-    .main{flex:1;overflow-y:auto;padding:20px;background:var(--bg)}
-    .page{display:none}.page.active{display:block}
-    .page-title{font-size:16px;font-weight:500;color:var(--text1);margin-bottom:4px}
-    .page-sub{font-size:12px;color:var(--text2);margin-bottom:14px}
-    .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
-    .metric{background:var(--bg3);border-radius:8px;padding:10px 12px}
-    .metric-label{font-size:10px;color:var(--text2);margin-bottom:2px}
-    .metric-value{font-size:20px;font-weight:500;color:var(--text1)}
-    .metric-sub{font-size:10px;color:var(--green);margin-top:2px}
-    .card{background:var(--card);border-radius:12px;border:0.5px solid var(--border);padding:14px 16px;margin-bottom:10px}
-    .card-title{font-size:13px;font-weight:500;color:var(--text1);margin-bottom:10px}
-    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-    .ig{display:flex;flex-direction:column;gap:3px}
-    .il{font-size:11px;color:var(--text3)}
-    .ig input,.ig select,.ig textarea{
-      font-size:13px;color:var(--text1);background:var(--bg3);
-      border:none;border-radius:7px;padding:8px 10px;outline:none;
-      appearance:none;-webkit-appearance:none;font-family:inherit;width:100%;
-    }
-    body.dark .ig input,body.dark .ig select,body.dark .ig textarea{color-scheme:dark}
-    .ig input:focus,.ig select:focus,.ig textarea:focus{background:var(--bg2);box-shadow:0 0 0 1.5px var(--green-border)}
-    .ig textarea{resize:none;height:58px}
-    .ig select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer}
-    .al-inp{font-size:13px;color:var(--text1);background:var(--bg3);border:none;border-radius:7px;padding:8px 10px;outline:none;appearance:none;-webkit-appearance:none;font-family:inherit;width:100%}
-    body.dark .al-inp{color-scheme:dark}
-    .al-inp:focus{background:var(--bg2);box-shadow:0 0 0 1.5px var(--green-border)}
-    .al-sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer}
-    .btn-p{background:var(--green);color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;width:100%;margin-top:4px}
-    .btn-p:disabled{opacity:0.45;cursor:not-allowed}
-    .btn-o{background:transparent;color:var(--green-mid);border:0.5px solid var(--green-border);padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;width:100%;margin-top:4px}
-    .ai-box{background:var(--green-bg);border-radius:12px;border:0.5px solid var(--green-border);padding:14px 16px;margin-top:10px}
-    .ai-box-title{font-size:10px;font-weight:500;color:var(--green-mid);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em}
-    .ai-content{font-size:13px;color:var(--green-text);line-height:1.6;white-space:pre-wrap}
-    .spin{display:inline-block;width:13px;height:13px;border:2px solid var(--green-border);border-top-color:var(--green);border-radius:50%;animation:sp 0.7s linear infinite;vertical-align:middle;margin-right:6px}
-    @keyframes sp{to{transform:rotate(360deg)}}
-    .rrow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border)}
-    .rrow:last-child{border-bottom:none}
-    .rdisc{width:30px;height:30px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:var(--green-mid);flex-shrink:0}
-    .rinfo{flex:1}
-    .rname{font-size:13px;color:var(--text1)}
-    .rmeta{font-size:10px;color:var(--text2);margin-top:1px}
-    .rval{font-weight:500;color:var(--text1);font-size:13px}
-    .btn-fb{font-size:10px;padding:3px 8px;border-radius:99px;border:0.5px solid var(--green-border);background:var(--green-bg);color:var(--green-mid);cursor:pointer}
-    .empty{font-size:13px;color:var(--text3);text-align:center;padding:24px 0}
-    .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-    .mki{display:flex;flex-direction:column;gap:2px}
-    .mkl{font-size:10px;color:var(--text3)}
-    .mki input{font-size:13px;background:var(--bg3);border:none;border-radius:7px;padding:7px 9px;color:var(--text1);outline:none;width:100%}
-    .mki input:focus{background:var(--bg2);box-shadow:0 0 0 1.5px var(--green-border)}
-    .pts-badge{font-size:10px;font-weight:500;color:var(--green-mid);margin-top:1px}
-    .ifb{background:var(--green-bg);border-radius:8px;padding:8px 10px;margin-top:6px;font-size:12px;color:var(--green-text);line-height:1.5;white-space:pre-wrap}
-    .tag{display:inline-block;font-size:9px;padding:2px 6px;border-radius:99px;font-weight:500;margin-right:3px}
-    .twk{background:var(--green-bg);color:var(--green-mid)}
-    .ttr{background:rgba(56,138,221,0.12);color:#185FA5}
-    body.dark .ttr{color:#85B7EB}
-    .divider{height:0.5px;background:var(--border);margin:10px 0}
-    .mk-total{background:var(--green);border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-    .mk-total-label{font-size:11px;color:rgba(255,255,255,0.7)}
-    .mk-total-val{font-size:22px;font-weight:500;color:#fff}
-    .upload-area{border:1px dashed var(--border2);border-radius:12px;padding:24px;text-align:center;cursor:pointer;margin-bottom:10px;background:var(--bg3)}
-    .upload-area:hover{background:var(--bg2)}
-    .upload-text{font-size:13px;color:var(--text2)}
-    .upload-sub{font-size:11px;color:var(--text3);margin-top:4px}
-    .tabs{display:flex;margin-bottom:12px;border-bottom:0.5px solid var(--border)}
-    .tab{font-size:12px;padding:7px 14px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-0.5px}
-    .tab.active{color:var(--green-mid);border-bottom-color:var(--green);font-weight:500}
-    .rg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .ri{display:flex;flex-direction:column;gap:2px}
-    .rl{font-size:10px;color:var(--text3)}
-    .ri input{font-size:13px;background:var(--bg3);border:none;border-radius:7px;padding:7px 9px;color:var(--text1);outline:none;width:100%}
-    .ri input:focus{background:var(--bg2);box-shadow:0 0 0 1.5px var(--green-border)}
-    .rpts{font-size:10px;font-weight:500;color:var(--green);margin-top:1px}
-    .anlauf-card{background:var(--card);border:0.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px}
-    .anlauf-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-    .anlauf-title{font-size:13px;font-weight:500;color:var(--text1)}
-    .anlauf-sub{font-size:10px;color:var(--text3)}
-    .anlauf-row{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:0.5px solid var(--border)}
-    .anlauf-row:last-child{border-bottom:none}
-    .anlauf-type{width:110px;font-size:12px;font-weight:500;color:var(--text1);flex-shrink:0}
-    .anlauf-steps{font-size:14px;font-weight:500;color:var(--green);width:50px;flex-shrink:0}
-    .anlauf-note{font-size:12px;color:var(--text2);line-height:1.4}
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.7">
+  <style type="text/css">
+    body {background-color: #f2f3f0}
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 16.0px '.SF NS'; color: #141414; -webkit-text-stroke: #141414}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 11.0px 'Helvetica Neue'; color: #000000; color: rgba(0, 0, 0, 0.85); -webkit-text-stroke: rgba(0, 0, 0, 0.85); min-height: 13.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px 'Helvetica Neue'; color: #9a9a9a; -webkit-text-stroke: #9a9a9a}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px '.SF NS'; color: #125c44; -webkit-text-stroke: #125c44; min-height: 16.0px}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px '.SF NS'; color: #125c44; -webkit-text-stroke: #125c44}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px 'Helvetica Neue'; color: #535353; -webkit-text-stroke: #535353; min-height: 16.0px}
+    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px 'Helvetica Neue'; color: #535353; -webkit-text-stroke: #535353}
+    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px 'Helvetica Neue'; color: #535353; -webkit-text-stroke: #535353; background-color: #ffffff}
+    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Helvetica Neue'; color: #535353; -webkit-text-stroke: #535353}
+    p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px 'Helvetica Neue'; color: #535353; -webkit-text-stroke: #535353}
+    p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 20.0px '.SF NS'; color: #141414; -webkit-text-stroke: #141414}
+    p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px 'Helvetica Neue'; color: #1e8f62; -webkit-text-stroke: #1e8f62}
+    p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px '.SF NS'; color: #141414; -webkit-text-stroke: #141414}
+    p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 13.0px 'Helvetica Neue'; color: #9a9a9a; -webkit-text-stroke: #9a9a9a}
+    span.s1 {font-kerning: none; background-color: #ffffff}
+    span.s2 {font-kerning: none; color: #1e8f62; background-color: #ffffff; -webkit-text-stroke: 0px #1e8f62}
+    span.s3 {font-kerning: none}
+    span.s4 {font-kerning: none; background-color: #e5f5ef}
+    span.s5 {font-kerning: none; background-color: #f2f3f0}
+    span.s6 {font-kerning: none; background-color: #eaeae7}
   </style>
 </head>
 <body>
-<div class="app">
-  <div class="sidebar">
-    <div class="logo">
-      <div>Track<span>Mind</span></div>
-      <button class="mode-btn" onclick="toggleMode()">
-        <svg id="mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-        </svg>
-      </button>
-    </div>
-    <div class="nav-section">Athlet</div>
-    <div class="nav-item active" onclick="nav('dashboard',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</div>
-    <div class="nav-item" onclick="nav('eintragen',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Eintragen</div>
-    <div class="nav-item" onclick="nav('anlaeufe',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Anläufe</div>
-    <div class="nav-item" onclick="nav('analyse',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analyse</div>
-    <div class="nav-section">Training</div>
-    <div class="nav-item" onclick="nav('training',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Trainingsplan</div>
-    <div class="nav-item" onclick="nav('upload',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Plan hochladen</div>
-    <div class="nav-section">Tools</div>
-    <div class="nav-item" onclick="nav('mehrkampf',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Mehrkampfrechner</div>
-  </div>
-
-  <div class="main">
-
-    <!-- DASHBOARD -->
-    <div id="page-dashboard" class="page active">
-      <div class="page-title">Dashboard</div>
-      <div class="page-sub">Deine aktuelle Saison</div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">Einträge</div><div class="metric-value" id="db-count">0</div><div class="metric-sub">Ergebnisse</div></div>
-        <div class="metric"><div class="metric-label">Bestes Ergebnis</div><div class="metric-value" id="db-best">–</div><div class="metric-sub" id="db-best-disc">kein Eintrag</div></div>
-        <div class="metric"><div class="metric-label">Letzte Disziplin</div><div class="metric-value" id="db-last-disc" style="font-size:13px;padding-top:4px">–</div><div class="metric-sub" id="db-last-val">–</div></div>
-      </div>
-      <div class="card"><div class="card-title">Letzte Ergebnisse</div><div id="db-results"><div class="empty">Noch keine Ergebnisse.</div></div></div>
-      <div class="card" id="tp-card" style="display:none"><div class="card-title">Trainingsplan vom Trainer</div><div class="ai-content" id="tp-content" style="color:var(--text1)"></div></div>
-    </div>
-
-    <!-- EINTRAGEN -->
-    <div id="page-eintragen" class="page">
-      <div class="page-title">Ergebnis eintragen</div>
-      <div class="page-sub">Alle Disziplinen – manuell</div>
-      <div class="card">
-        <div class="form-grid">
-          <div class="ig"><div class="il">Disziplin</div>
-            <select id="et-disc" onchange="onDiscChange()">
-              <optgroup label="Sprint"><option>100m</option><option>200m</option><option>400m</option></optgroup>
-              <optgroup label="Mittel/Lang"><option>800m</option><option>1500m</option><option>5000m</option><option>10000m</option></optgroup>
-              <optgroup label="Hürden"><option>100m Hürden</option><option>110m Hürden</option><option>400m Hürden</option></optgroup>
-              <optgroup label="Sprünge"><option>Weitsprung</option><option>Hochsprung</option><option>Dreisprung</option><option>Stabhochsprung</option></optgroup>
-              <optgroup label="Würfe"><option>Kugelstoß</option><option>Diskuswurf</option><option>Speerwurf</option><option>Hammerwurf</option></optgroup>
-              <optgroup label="Mehrkampf"><option>Zehnkampf</option><option>Siebenkampf</option></optgroup>
-            </select>
-          </div>
-          <div class="ig"><div class="il">Art</div><select id="et-type"><option>Wettkampf</option><option>Training</option></select></div>
-          <div class="ig"><div class="il">Altersklasse</div>
-            <select id="et-ak"><option>U18 männlich</option><option>U20 männlich</option><option>U23 männlich</option><option>Aktive männlich</option><option>U18 weiblich</option><option>U20 weiblich</option><option>U23 weiblich</option><option>Aktive weiblich</option></select>
-          </div>
-          <div class="ig"><div class="il">Datum</div><input type="date" id="et-date"/></div>
-        </div>
-        <div id="et-single"><div class="ig" style="margin-bottom:10px"><div class="il">Ergebnis</div><input type="text" id="et-result" placeholder="z.B. 10.84 oder 7.23"/></div></div>
-        <div id="et-multi" style="display:none">
-          <div class="divider"></div>
-          <div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:8px">Einzeldisziplinen & Punkte</div>
-          <div class="mk-total"><div><div class="mk-total-label">Gesamtpunkte</div><div class="mk-total-val" id="et-mk-total">0</div></div><div style="font-size:11px;color:rgba(255,255,255,0.6)">live berechnet</div></div>
-          <div class="mk-grid" id="et-mk-fields"></div>
-          <div style="font-size:10px;color:var(--text3);margin-bottom:10px">Offizielle IAAF-Formel. Einzelwerte werden separat gespeichert.</div>
-        </div>
-        <div class="ig" style="margin-bottom:10px"><div class="il">Notizen</div><textarea id="et-notes" placeholder="optional"></textarea></div>
-        <button class="btn-p" onclick="saveResult()">Eintragen</button>
-      </div>
-      <div class="card"><div class="card-title">Gespeicherte Ergebnisse</div><div id="et-list"><div class="empty">Noch keine Einträge.</div></div></div>
-    </div>
-
-    <!-- ANLÄUFE -->
-    <div id="page-anlaeufe" class="page">
-      <div class="page-title">Anlauf-Notizen</div>
-      <div class="page-sub">Schrittanzahl & Notizen für deine Anläufe</div>
-      <div class="card">
-        <div class="ig" style="margin-bottom:12px"><div class="il">Disziplin</div>
-          <select id="al-disc" class="al-inp al-sel">
-            <option>Weitsprung</option><option>Dreisprung</option><option>Stabhochsprung</option><option>Hochsprung</option><option>Speerwurf</option>
-          </select>
-        </div>
-        <div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:8px">Anläufe</div>
-        <div id="al-rows"></div>
-        <button class="btn-o" onclick="addAlRow()" style="margin-bottom:8px">+ Weiteren Anlauf</button>
-        <button class="btn-p" onclick="saveAnlauf()">Speichern</button>
-      </div>
-      <div id="al-list"><div class="empty">Noch keine Anlauf-Notizen.</div></div>
-    </div>
-
-    <!-- ANALYSE -->
-    <div id="page-analyse" class="page">
-      <div class="page-title">Stärken & Schwächen</div>
-      <div class="page-sub">KI analysiert deine Ergebnisse</div>
-      <div class="card"><div class="card-title">Deine Ergebnisse</div><div id="an-list"><div class="empty">Noch keine Ergebnisse.</div></div></div>
-      <button class="btn-p" id="an-btn" onclick="runAnalyse()">KI-Analyse starten</button>
-      <div id="an-ai-box" style="display:none" class="ai-box"><div class="ai-box-title">KI-Analyse</div><div class="ai-content" id="an-ai-content"></div></div>
-    </div>
-
-    <!-- TRAINING -->
-    <div id="page-training" class="page">
-      <div class="page-title">Trainingsplan (KI)</div>
-      <div class="page-sub">Personalisiert auf Basis deiner Daten</div>
-      <div class="card">
-        <div class="form-grid">
-          <div class="ig"><div class="il">Hauptdisziplin</div><select id="tr-disc"><option>100m Sprint</option><option>200m</option><option>400m</option><option>800m</option><option>1500m</option><option>Weitsprung</option><option>Hochsprung</option><option>Stabhochsprung</option><option>Kugelstoß</option><option>Speerwurf</option><option>Zehnkampf</option><option>Siebenkampf</option></select></div>
-          <div class="ig"><div class="il">Trainingstage/Woche</div><select id="tr-days"><option>3 Tage</option><option>4 Tage</option><option>5 Tage</option><option>6 Tage</option></select></div>
-          <div class="ig"><div class="il">Niveau</div><select id="tr-level"><option>Einsteiger</option><option>Fortgeschritten</option><option>Leistungssport</option></select></div>
-          <div class="ig"><div class="il">Ziel</div><select id="tr-goal"><option>Bestzeit verbessern</option><option>Wettkampfvorbereitung</option><option>Grundlagenaufbau</option><option>Regeneration</option></select></div>
-        </div>
-        <div class="ig" style="margin-bottom:10px"><div class="il">Aktuelle Bestleistung (optional)</div><input type="text" id="tr-pb" placeholder="z.B. 10.84s"/></div>
-        <button class="btn-p" id="tr-btn" onclick="generatePlan()">Plan generieren</button>
-      </div>
-      <div id="tr-ai-box" style="display:none" class="ai-box"><div class="ai-box-title">Dein KI-Trainingsplan</div><div class="ai-content" id="tr-ai-content"></div></div>
-    </div>
-
-    <!-- UPLOAD -->
-    <div id="page-upload" class="page">
-      <div class="page-title">Trainingsplan hochladen</div>
-      <div class="page-sub">PDF oder Bild – KI liest den Plan aus</div>
-      <div class="card">
-        <div class="upload-area" onclick="document.getElementById('file-input').click()">
-          <svg style="width:32px;height:32px;margin:0 auto 10px;display:block;stroke:var(--text3)" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <div class="upload-text">PDF oder Bild hochladen</div>
-          <div class="upload-sub">PDF, JPG, PNG</div>
-        </div>
-        <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="handleUpload(event)"/>
-        <div id="upload-status" style="display:none;font-size:13px;color:var(--text2);text-align:center;padding:10px"></div>
-        <div id="upload-ai-box" style="display:none" class="ai-box"><div class="ai-box-title">Ausgelesener Plan</div><div class="ai-content" id="upload-ai-content"></div></div>
-        <button id="upload-save-btn" style="display:none" class="btn-o" onclick="saveTrainerPlan()">Im Dashboard anzeigen</button>
-      </div>
-    </div>
-
-    <!-- MEHRKAMPFRECHNER -->
-    <div id="page-mehrkampf" class="page">
-      <div class="page-title">Mehrkampfrechner</div>
-      <div class="page-sub">Offizielle IAAF-Punkteberechnung</div>
-      <div class="tabs">
-        <div class="tab active" onclick="switchMkTab('zehn',this)">Zehnkampf (Männer)</div>
-        <div class="tab" onclick="switchMkTab('sieben',this)">Siebenkampf (Frauen)</div>
-      </div>
-      <div class="card">
-        <div class="mk-total" style="margin-bottom:12px">
-          <div><div class="mk-total-label">Gesamtpunkte</div><div class="mk-total-val" id="mk-total-display">0</div></div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.6)" id="mk-level-text">Werte eingeben</div>
-        </div>
-        <div class="rg" id="mk-rechner-fields"></div>
-        <button class="btn-o" style="margin-top:10px" onclick="resetMk()">Zurücksetzen</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<script>
-let results=[],anlaufNotes=[],trainerPlanText='',currentMkTab='zehn',isDark=false,alRowCount=0;
-
-const IAAF_ZEHN={'100m':{A:25.4347,B:18.0,C:1.81,t:true},'Weitsprung':{A:0.14354,B:220,C:1.40,t:false},'Kugelstoß':{A:51.39,B:1.5,C:1.05,t:false},'Hochsprung':{A:0.8465,B:75.0,C:1.42,t:false},'400m':{A:1.53775,B:82.0,C:1.81,t:true},'110m Hürden':{A:5.74352,B:28.5,C:1.92,t:true},'Diskuswurf':{A:12.91,B:4.0,C:1.10,t:false},'Stabhochsprung':{A:0.2797,B:100,C:1.35,t:false},'Speerwurf':{A:10.14,B:7.0,C:1.08,t:false},'1500m':{A:0.03768,B:480,C:1.85,t:true}};
-const IAAF_SIEBEN={'100m Hürden':{A:9.23076,B:26.7,C:1.835,t:true},'Hochsprung':{A:1.84523,B:75.0,C:1.348,t:false},'Kugelstoß':{A:56.0211,B:1.5,C:1.05,t:false},'200m':{A:4.99087,B:42.5,C:1.81,t:true},'Weitsprung':{A:0.188807,B:210,C:1.41,t:false},'Speerwurf':{A:15.9803,B:3.8,C:1.04,t:false},'800m':{A:0.11193,B:254,C:1.88,t:true}};
-const ZEHN_D=Object.keys(IAAF_ZEHN),SIEBEN_D=Object.keys(IAAF_SIEBEN);
-const SPRUNG_D=['Weitsprung','Hochsprung','Dreisprung','Stabhochsprung'];
-
-function calcPts(disc,val,tab){
-  const p=(tab==='sieben'?IAAF_SIEBEN:IAAF_ZEHN)[disc];if(!p)return 0;
-  const v=parseFloat(val);if(isNaN(v)||v<=0)return 0;
-  const m=(!p.t&&SPRUNG_D.includes(disc))?v*100:v;
-  const diff=p.t?(p.B-m):(m-p.B);
-  return diff<=0?0:Math.max(0,Math.floor(p.A*Math.pow(diff,p.C)));
-}
-function eid(d){return d.replace(/[^a-zA-Z0-9]/g,'_')}
-
-function toggleMode(){
-  isDark=!isDark;
-  document.body.classList.toggle('dark',isDark);
-  const ic=document.getElementById('mode-icon');
-  ic.innerHTML=isDark
-    ?'<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>'
-    :'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-}
-
-function onDiscChange(){
-  const d=document.getElementById('et-disc').value,isM=d==='Zehnkampf'||d==='Siebenkampf';
-  document.getElementById('et-single').style.display=isM?'none':'block';
-  document.getElementById('et-multi').style.display=isM?'block':'none';
-  if(isM)buildMkFields(d);
-}
-
-function buildMkFields(disc){
-  const discs=disc==='Zehnkampf'?ZEHN_D:SIEBEN_D,tab=disc==='Zehnkampf'?'zehn':'sieben';
-  const isF=d=>!['100m','200m','400m','800m','1500m','100m Hürden','110m Hürden','400m Hürden'].includes(d);
-  document.getElementById('et-mk-fields').innerHTML=discs.map(d=>`
-    <div class="mki"><div class="mkl">${d}</div>
-    <input type="text" class="mk-val" data-disc="${d}" data-tab="${tab}" placeholder="${isF(d)?'m':'s'}" oninput="updateMkTotal()"/>
-    <div class="pts-badge" id="ep-${eid(d)}">0 Pkt</div></div>`).join('');
-}
-
-function updateMkTotal(){
-  let t=0;
-  document.querySelectorAll('.mk-val').forEach(i=>{
-    const pts=calcPts(i.dataset.disc,i.value,i.dataset.tab);t+=pts;
-    const el=document.getElementById('ep-'+eid(i.dataset.disc));if(el)el.textContent=pts+' Pkt';
-  });
-  document.getElementById('et-mk-total').textContent=t;
-}
-
-function saveResult(){
-  const disc=document.getElementById('et-disc').value,type=document.getElementById('et-type').value,ak=document.getElementById('et-ak').value,date=document.getElementById('et-date').value||'heute',notes=document.getElementById('et-notes').value.trim();
-  const isM=disc==='Zehnkampf'||disc==='Siebenkampf';
-  if(isM){
-    results.push({disc,type,result:document.getElementById('et-mk-total').textContent+' Pkt',date,ak,notes});
-    document.querySelectorAll('.mk-val').forEach(i=>{const v=i.value.trim();if(v)results.push({disc:i.dataset.disc,type,result:v,date,ak,notes:'Aus '+disc});});
-  } else {
-    const r=document.getElementById('et-result').value.trim();
-    if(!r){alert('Bitte Ergebnis eingeben.');return;}
-    results.push({disc,type,result:r,date,ak,notes});
-  }
-  document.getElementById('et-result').value='';document.getElementById('et-notes').value='';
-  document.querySelectorAll('.mk-val').forEach(i=>i.value='');
-  updateMkTotal();renderEtList();
-}
-
-function renderEtList(){
-  if(!results.length){document.getElementById('et-list').innerHTML='<div class="empty">Noch keine Einträge.</div>';return;}
-  document.getElementById('et-list').innerHTML=results.slice().reverse().map((r,i)=>{
-    const idx=results.length-1-i;
-    const fb=r.feedback?`<div class="ifb">${r.feedback}</div>`:`<button class="btn-fb" id="fb-${idx}" onclick="getFeedback(${idx})">KI-Feedback</button>`;
-    return`<div class="rrow" style="flex-wrap:wrap"><div class="rdisc">${r.disc.substring(0,3)}</div>
-    <div class="rinfo"><div class="rname">${r.disc} <span class="tag ${r.type==='Wettkampf'?'twk':'ttr'}">${r.type}</span></div>
-    <div class="rmeta">${r.ak} · ${r.date}${r.notes?' · '+r.notes:''}</div>
-    <div id="fba-${idx}" style="margin-top:4px">${fb}</div></div>
-    <div class="rval">${r.result}</div></div>`;
-  }).join('');
-}
-
-function addAlRow(){
-  const div=document.createElement('div');
-  div.style.cssText='display:grid;grid-template-columns:110px 75px 1fr;gap:8px;margin-bottom:8px;align-items:start';
-  div.innerHTML=`
-    <div class="ig"><div class="il">Anlauftyp</div><select class="al-inp al-sel al-type-sel"><option>Hauptanlauf</option><option>Kurzer Anlauf</option><option>Wettkampfanlauf</option><option>Trainingsanlauf</option><option>Testanlauf</option></select></div>
-    <div class="ig"><div class="il">Schritte</div><input type="number" class="al-inp al-steps" placeholder="18" min="1" max="60"/></div>
-    <div class="ig"><div class="il">Notiz</div><input type="text" class="al-inp al-note" placeholder="z.B. Absprung bei Markierung 2..."/></div>`;
-  document.getElementById('al-rows').appendChild(div);
-  alRowCount++;
-}
-
-function saveAnlauf(){
-  const disc=document.getElementById('al-disc').value,entries=[];
-  document.querySelectorAll('#al-rows > div').forEach(row=>{
-    const steps=row.querySelector('.al-steps')?.value.trim(),type=row.querySelector('.al-type-sel')?.value,note=row.querySelector('.al-note')?.value.trim();
-    if(steps)entries.push({type,steps,note});
-  });
-  if(!entries.length){alert('Bitte mindestens eine Schrittanzahl eingeben.');return;}
-  anlaufNotes.push({disc,entries});
-  renderAlList();
-  document.getElementById('al-rows').innerHTML='';alRowCount=0;addAlRow();
-}
-
-function renderAlList(){
-  if(!anlaufNotes.length){document.getElementById('al-list').innerHTML='<div class="empty">Noch keine Anlauf-Notizen.</div>';return;}
-  document.getElementById('al-list').innerHTML=anlaufNotes.slice().reverse().map(a=>`
-    <div class="anlauf-card">
-      <div class="anlauf-header"><div class="anlauf-title">${a.disc}</div><div class="anlauf-sub">${a.entries.length} Anlauf${a.entries.length!==1?'läufe':''}</div></div>
-      ${a.entries.map(e=>`<div class="anlauf-row"><div class="anlauf-type">${e.type}</div><div class="anlauf-steps">${e.steps} Schr.</div><div class="anlauf-note">${e.note||'–'}</div></div>`).join('')}
-    </div>`).join('');
-}
-
-function updateDashboard(){
-  document.getElementById('db-count').textContent=results.length;
-  if(!results.length){['db-best','db-last-disc','db-last-val'].forEach(id=>document.getElementById(id).textContent='–');document.getElementById('db-best-disc').textContent='kein Eintrag';document.getElementById('db-results').innerHTML='<div class="empty">Noch keine Ergebnisse.</div>';return;}
-  const last=results[results.length-1];
-  document.getElementById('db-last-disc').textContent=last.disc;document.getElementById('db-last-val').textContent=last.result;
-  document.getElementById('db-best').textContent=results[0].result;document.getElementById('db-best-disc').textContent=results[0].disc;
-  document.getElementById('db-results').innerHTML=results.slice().reverse().slice(0,5).map(r=>`<div class="rrow"><div class="rdisc">${r.disc.substring(0,3)}</div><div class="rinfo"><div class="rname">${r.disc}</div><div class="rmeta">${r.type} · ${r.date}</div></div><div class="rval">${r.result}</div></div>`).join('');
-  if(trainerPlanText){document.getElementById('tp-card').style.display='block';document.getElementById('tp-content').textContent=trainerPlanText;}
-}
-
-async function getFeedback(idx){
-  const r=results[idx],area=document.getElementById('fba-'+idx),btn=document.getElementById('fb-'+idx);
-  if(btn)btn.disabled=true;
-  area.innerHTML='<span class="spin"></span><span style="font-size:12px;color:var(--text2)">Wird geladen...</span>';
-  const text=await callClaude(`Leichtathletik-Trainer. 3-4 Sätze konkretes Feedback Deutsch:\nDisziplin: ${r.disc}, Ergebnis: ${r.result}, AK: ${r.ak}, Notizen: ${r.notes||'keine'}. Nur Fließtext.`);
-  results[idx].feedback=text;area.innerHTML=`<div class="ifb">${text}</div>`;
-}
-
-async function runAnalyse(){
-  if(!results.length){alert('Bitte zuerst Ergebnisse eintragen.');return;}
-  const box=document.getElementById('an-ai-box'),content=document.getElementById('an-ai-content'),btn=document.getElementById('an-btn');
-  box.style.display='block';setLoad(content,btn,true);
-  document.getElementById('an-list').innerHTML=results.map(r=>`<div class="rrow"><div class="rdisc">${r.disc.substring(0,3)}</div><div class="rinfo"><div class="rname">${r.disc}</div><div class="rmeta">${r.ak} · ${r.date}</div></div><div class="rval">${r.result}</div></div>`).join('');
-  const text=await callClaude(`Leichtathletik-Trainer. Analysiere auf Deutsch:\n${results.map(r=>`- ${r.disc} (${r.ak}): ${r.result}`).join('\n')}\n\n1. Gesamteinschätzung 2. Stärken 3. Verbesserungspotenzial 4. Empfehlung nächster Monat`);
-  content.textContent=text;setLoad(content,btn,false);
-}
-
-async function generatePlan(){
-  const disc=document.getElementById('tr-disc').value,days=document.getElementById('tr-days').value,level=document.getElementById('tr-level').value,goal=document.getElementById('tr-goal').value,pb=document.getElementById('tr-pb').value.trim();
-  const box=document.getElementById('tr-ai-box'),content=document.getElementById('tr-ai-content'),btn=document.getElementById('tr-btn');
-  box.style.display='block';setLoad(content,btn,true);
-  const text=await callClaude(`Leichtathletik-Trainer. Wochentrainingsplan Deutsch.\nDisziplin: ${disc}, Tage: ${days}, Niveau: ${level}, Ziel: ${goal}${pb?', PB: '+pb:''}${results.length?'\nErgebnisse:\n'+results.map(r=>`- ${r.disc}: ${r.result}`).join('\n'):''}\nJeder Tag: konkrete Einheit, Umfang, Intensität. Ruhetage kennzeichnen. 2 Hinweise am Ende.`);
-  content.textContent=text;setLoad(content,btn,false);
-}
-
-async function handleUpload(evt){
-  const file=evt.target.files[0];if(!file)return;
-  const status=document.getElementById('upload-status'),box=document.getElementById('upload-ai-box'),content=document.getElementById('upload-ai-content');
-  status.style.display='block';status.innerHTML='<span class="spin"></span>Wird verarbeitet...';
-  box.style.display='block';setLoad(content,null,true,'KI liest den Plan aus...');
-  const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});
-  const isPdf=file.type==='application/pdf';
-  const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:[isPdf?{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}}:{type:'image',source:{type:'base64',media_type:file.type,data:b64}},{type:'text',text:'Trainingsplan. Extrahiere alle Einheiten strukturiert auf Deutsch. Jeden Tag mit Einheit, Umfang, Schwerpunkt.'}]}]})});
-  const data=await resp.json();
-  const text=data.content?.[0]?.text||'Konnte den Plan nicht auslesen.';
-  content.textContent=text;trainerPlanText=text;status.style.display='none';
-  document.getElementById('upload-save-btn').style.display='block';setLoad(content,null,false);
-}
-
-function saveTrainerPlan(){document.getElementById('tp-card').style.display='block';document.getElementById('tp-content').textContent=trainerPlanText;alert('Plan im Dashboard gespeichert!');}
-
-function switchMkTab(tab,el){currentMkTab=tab;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');buildRechnerFields();}
-
-function buildRechnerFields(){
-  const discs=currentMkTab==='zehn'?ZEHN_D:SIEBEN_D;
-  const isF=d=>!['100m','200m','400m','800m','1500m','100m Hürden','110m Hürden','400m Hürden'].includes(d);
-  document.getElementById('mk-rechner-fields').innerHTML=discs.map(d=>`
-    <div class="ri"><div class="rl">${d}</div>
-    <input type="text" id="mkr-${eid(d)}" placeholder="${isF(d)?'m':'s'}" oninput="updateRechner()"/>
-    <div class="rpts" id="mkrp-${eid(d)}">0 Pkt</div></div>`).join('');
-}
-
-function updateRechner(){
-  const discs=currentMkTab==='zehn'?ZEHN_D:SIEBEN_D;let total=0;
-  discs.forEach(d=>{
-    const pts=calcPts(d,document.getElementById('mkr-'+eid(d))?.value||'',currentMkTab);total+=pts;
-    const el=document.getElementById('mkrp-'+eid(d));if(el)el.textContent=pts+' Pkt';
-  });
-  document.getElementById('mk-total-display').textContent=total;
-  const lvl=total>=8500?'Weltklasse':total>=7500?'Internationales Niveau':total>=6500?'Nationales Niveau':total>=5500?'Leistungssport':total>0?'Einsteiger':'Werte eingeben';
-  document.getElementById('mk-level-text').textContent=lvl;
-}
-
-function resetMk(){
-  const discs=currentMkTab==='zehn'?ZEHN_D:SIEBEN_D;
-  discs.forEach(d=>{const i=document.getElementById('mkr-'+eid(d));if(i)i.value='';const e=document.getElementById('mkrp-'+eid(d));if(e)e.textContent='0 Pkt';});
-  document.getElementById('mk-total-display').textContent='0';document.getElementById('mk-level-text').textContent='Werte eingeben';
-}
-
-function nav(id,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');el.classList.add('active');
-  if(id==='dashboard')updateDashboard();
-  if(id==='analyse')document.getElementById('an-list').innerHTML=results.length?results.map(r=>`<div class="rrow"><div class="rdisc">${r.disc.substring(0,3)}</div><div class="rinfo"><div class="rname">${r.disc}</div><div class="rmeta">${r.ak} · ${r.date}</div></div><div class="rval">${r.result}</div></div>`).join(''):'<div class="empty">Noch keine Ergebnisse.</div>';
-  if(id==='mehrkampf')buildRechnerFields();
-}
-
-async function callClaude(prompt){
-  const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
-  const d=await res.json();return d.content?.[0]?.text||'Fehler.';
-}
-function setLoad(el,btn,on,msg='KI analysiert...'){
-  if(on){el.innerHTML=`<span class="spin"></span>${msg}`;if(btn)btn.disabled=true;}else{if(btn)btn.disabled=false;}
-}
-
-document.getElementById('et-date').valueAsDate=new Date();
-addAlRow();buildRechnerFields();
-</script>
+<p class="p1"><span class="s1"><b>Track</b></span><span class="s2"><b>Mind</b><b></b></span></p>
+<p class="p2"><span class="s3"></span><br></p>
+<p class="p3"><span class="s1">ATHLET</span></p>
+<p class="p4"><span class="s3"></span><br></p>
+<p class="p5"><span class="s4">Dashboard</span></p>
+<p class="p6"><span class="s3"></span><br></p>
+<p class="p7"><span class="s1">Eintragen</span></p>
+<p class="p6"><span class="s3"></span><br></p>
+<p class="p7"><span class="s1">Anläufe</span></p>
+<p class="p6"><span class="s3"></span><br></p>
+<p class="p7"><span class="s1">Analyse</span></p>
+<p class="p3"><span class="s1">TRAINING</span></p>
+<p class="p6"><span class="s3"></span><br></p>
+<p class="p7"><span class="s1">Trainingsplan</span></p>
+<p class="p6"><span class="s3"></span><br></p>
+<p class="p7"><span class="s1">Einheit bewerten</span></p>
+<p class="p6"><span class="s3"></span><br></p>
+<p class="p7"><span class="s1">Plan hochladen</span></p>
+<p class="p3"><span class="s1">TOOLS</span></p>
+<p class="p6"><span class="s3"></span><br></p>
+<p class="p8"><span class="s3">Mehrkampfrechner</span></p>
+<p class="p1"><span class="s5">Dashboard</span></p>
+<p class="p9"><span class="s5">Deine aktuelle Saison</span></p>
+<p class="p10"><span class="s6">Einträge</span></p>
+<p class="p11"><span class="s6">0</span></p>
+<p class="p12"><span class="s6">Ergebnisse</span></p>
+<p class="p10"><span class="s6">Bestes Ergebnis</span></p>
+<p class="p11"><span class="s6">–</span></p>
+<p class="p12"><span class="s6">kein Eintrag</span></p>
+<p class="p10"><span class="s6">Letzte Disziplin</span></p>
+<p class="p13"><span class="s6">–</span></p>
+<p class="p12"><span class="s6">–</span></p>
+<p class="p10"><span class="s6">Ø Belastung (7 Tage)</span></p>
+<p class="p11"><span class="s6">–</span></p>
+<p class="p12"><span class="s6">von 10</span></p>
+<p class="p10"><span class="s6">Ø Energie (7 Tage)</span></p>
+<p class="p11"><span class="s6">–</span></p>
+<p class="p12"><span class="s6">von 10</span></p>
+<p class="p10"><span class="s6">Einheiten bewertet</span></p>
+<p class="p11"><span class="s6">0</span></p>
+<p class="p12"><span class="s6">gesamt</span></p>
+<p class="p13"><span class="s1">Letzte Ergebnisse</span></p>
+<p class="p14"><span class="s1">Noch keine Ergebnisse.</span></p>
 </body>
 </html>

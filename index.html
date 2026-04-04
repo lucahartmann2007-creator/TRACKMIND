@@ -543,19 +543,18 @@ async function doRegister(){
   const btn=document.getElementById('register-btn');
   btn.disabled=true;btn.textContent='Wird erstellt...';
   try{
-    const {data,error}=await supabaseClient.auth.signUp({email,password});
+    const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:{name,rolle:selectedRolle}}});
     if(error){showAuthError(error.message);btn.disabled=false;btn.textContent='Konto erstellen';return;}
     const userId=data.user?.id;
     if(!userId){showAuthError('Kein User erstellt.');btn.disabled=false;btn.textContent='Konto erstellen';return;}
-    const {error:pe}=await supabaseClient.from('profile').insert({id:userId,name,rolle:selectedRolle});
-    if(pe){showAuthError('Profil-Fehler: '+pe.message);btn.disabled=false;btn.textContent='Konto erstellen';return;}
+    // Profil wird automatisch durch Datenbank-Trigger erstellt
     // Email-Verifikation: prüfen ob Bestätigung nötig
     if(!data.session){
       // Supabase hat keine Session zurückgegeben → Email-Verifikation aktiv
       document.getElementById('auth-error').style.background='#f0faf5';
       document.getElementById('auth-error').style.borderColor='var(--green-border)';
       document.getElementById('auth-error').style.color='var(--green-mid)';
-      showAuthError('Konto erstellt! Bitte bestätige deine E-Mail-Adresse. Schau in deinem Postfach nach einer Mail von TrackMind.');
+      showAuthError('Konto erstellt! Eine Bestätigungsmail wurde an '+email+' gesendet. Bitte bestätige deine E-Mail und logge dich dann hier ein.');
       btn.disabled=false;btn.textContent='Konto erstellen';return;
     }
     const {data:ld,error:le}=await supabaseClient.auth.signInWithPassword({email,password});

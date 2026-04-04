@@ -755,7 +755,11 @@ async function loadVereine(){
   if(!supabaseClient||!currentUser)return;
   const {data:ms}=await supabaseClient.from('verein_mitglieder').select('verein_id, vereine(id,name,einladungslink,created_by)').eq('nutzer_id',currentUser.id);
   const list=document.getElementById('verein-list');
-  if(!ms||!ms.length){list.innerHTML='<div class="empty">Du bist noch in keinem Verein.</div>';return;}
+  const inVerein=ms&&ms.length>0;
+  // Erstellen/Suchen nur anzeigen wenn noch nicht in einem Verein
+  document.getElementById('verein-create-card').style.display=inVerein?'none':'block';
+  document.querySelector('.join-box').style.display=inVerein?'none':'block';
+  if(!inVerein){list.innerHTML='<div class="empty">Du bist noch in keinem Verein.</div>';return;}
   const cards=await Promise.all(ms.map(async({vereine:v})=>{
     if(!v)return'';
     const {data:mbs}=await supabaseClient.from('verein_mitglieder').select('nutzer_id').eq('verein_id',v.id);

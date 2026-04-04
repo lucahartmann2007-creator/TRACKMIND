@@ -229,9 +229,10 @@
     <div class="nav-item" onclick="nav('upload',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Plan hochladen</div>
     <div id="nav-verein-section" class="nav-section" style="display:none">Verein</div>
     <div id="nav-verein" class="nav-item" style="display:none" onclick="nav('verein',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Mein Verein</div>
-    <div id="nav-gruppe-section" class="nav-section" style="display:none">Gruppe</div>
+    <div id="nav-gruppe-section" class="nav-section" style="display:none"></div>
     <div id="nav-trainer" class="nav-item" style="display:none" onclick="nav('trainer',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Meine Gruppen</div>
-    <div id="nav-gruppe" class="nav-item" style="display:none" onclick="nav('gruppe',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Meine Gruppe</div>
+    <div id="nav-gruppe" class="nav-item" style="display:none" onclick="nav('gruppe',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Meine Gruppen</div>
+    <div id="nav-meine-gruppen" class="nav-item" style="display:none;padding-left:28px;font-size:12px" onclick="nav('gruppe',this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Meine Gruppen</div>
     <div class="nav-section">Tools</div>
     <div class="nav-item" onclick="nav('einstellungen',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Einstellungen</div>
     <div class="nav-item" onclick="nav('mehrkampf',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Mehrkampfrechner</div>
@@ -397,6 +398,10 @@
         <button class="btn-p" onclick="createGruppe()">Gruppe erstellen</button>
       </div>
       <div id="trainer-gruppen-list"><div class="empty">Noch keine Gruppen erstellt.</div></div>
+      <div id="trainer-anfragen-section" style="display:none;margin-bottom:14px">
+        <div class="page-title" style="margin-bottom:8px">Offene Beitrittsanfragen</div>
+        <div id="trainer-anfragen-list"></div>
+      </div>
       <div id="trainer-athleten-section" style="display:none">
         <div class="page-title" id="trainer-gruppe-titel" style="margin:14px 0 8px">Athleten</div>
         <div class="tp-filter">
@@ -539,7 +544,7 @@ async function doLogout(){
   results=[];bewertungen=[];anlaufNotes=[];trainerAthleten=[];
   document.getElementById('auth-screen').style.display='flex';
   document.getElementById('main-app').style.display='none';
-  ['nav-verein-section','nav-verein','nav-gruppe-section','nav-trainer','nav-gruppe'].forEach(id=>document.getElementById(id).style.display='none');
+  ['nav-verein-section','nav-verein','nav-gruppe-section','nav-trainer','nav-gruppe','nav-meine-gruppen'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('login-email').value='';document.getElementById('login-password').value='';
   switchAuthTab('login');
 }
@@ -588,7 +593,16 @@ function nav(id,el){
   if(id==='analyse')document.getElementById('an-list').innerHTML=results.length?results.map(r=>`<div class="rrow"><div class="rdisc">${r.disc.substring(0,3)}</div><div class="rinfo"><div class="rname">${r.disc}</div><div class="rmeta">${r.ak} · ${r.date}</div></div><div class="rval">${r.result}</div></div>`).join(''):'<div class="empty">Noch keine Ergebnisse.</div>';
   if(id==='mehrkampf')buildRechnerFields();
   if(id==='einstellungen')updateSettingsPage().catch(()=>{});
-  if(id==='verein')loadVereine().catch(()=>{});
+  if(id==='verein'){
+    loadVereine().catch(()=>{});
+    // Sub-nav Meine Gruppen einblenden
+    const subNav=document.getElementById('nav-meine-gruppen');
+    if(subNav)subNav.style.display='flex';
+  } else {
+    // Sub-nav ausblenden wenn andere Seite
+    const subNav=document.getElementById('nav-meine-gruppen');
+    if(subNav&&id!=='gruppe')subNav.style.display='none';
+  }
 }
 function updateDashboard(){
   document.getElementById('db-count').textContent=results.length;
@@ -666,7 +680,7 @@ async function setupNavForRole(){
   const rolle=currentProfile?.rolle;
   document.getElementById('nav-verein-section').style.display='block';
   document.getElementById('nav-verein').style.display='flex';
-  document.getElementById('nav-gruppe-section').style.display='block';
+  document.getElementById('nav-gruppe-section').style.display='none';
   document.getElementById('verein-create-card').style.display='block';
   if(rolle==='trainer'){
     document.getElementById('nav-trainer').style.display='flex';
@@ -721,7 +735,9 @@ async function showGruppeAthleten(gruppeId,gruppeName){
     const [e,b]=await Promise.all([supabaseClient.from('ergebnisse').select('*').eq('nutzer_id',m.athlet_id).order('datum',{ascending:false}),supabaseClient.from('bewertungen').select('*').eq('nutzer_id',m.athlet_id).order('datum',{ascending:false})]);
     m.ergebnisse=e.data||[];m.bewertungen=b.data||[];
   }
-  renderTrainerAthleten();document.getElementById('trainer-athleten-section').scrollIntoView({behavior:'smooth'});
+  renderTrainerAthleten();
+  await loadTrainerAnfragen(gruppeId);
+  document.getElementById('trainer-athleten-section').scrollIntoView({behavior:'smooth'});
 }
 function renderTrainerAthleten(){
   const list=document.getElementById('trainer-athleten-list');
@@ -808,7 +824,7 @@ async function loadVereine(){
           </div>
         </div>
         <div id="vtab-gruppen-${vid}" style="display:none">
-          ${gruppen.length?gruppen.map(g=>`<div class="gruppe-row"><div class="gruppe-disc">GRP</div><div class="rinfo"><div class="rname">${g.name}</div></div>${currentProfile?.rolle!=='trainer'?`<button class="copy-btn" onclick="copyLink(window.location.origin+'?join=${g.einladungslink}',this)" style="margin-left:auto">Link</button>`:''}</div>`).join(''):'<div class="empty">Noch keine Gruppen in diesem Verein.</div>'}
+          <div id="vgruppen-content-${vid}"><div class="empty" style="padding:16px 0">Wird geladen...</div></div>
         </div>
       </div>
     </div>`;
@@ -821,6 +837,70 @@ function switchVereinTab(vid,tab,el){
   el.classList.add('active');
   document.getElementById('vtab-mitglieder-'+vid).style.display=tab==='mitglieder'?'block':'none';
   document.getElementById('vtab-gruppen-'+vid).style.display=tab==='gruppen'?'block':'none';
+  if(tab==='gruppen')loadVereinGruppen(vid);
+}
+async function loadVereinGruppen(vid){
+  const box=document.getElementById('vgruppen-content-'+vid);
+  if(!box)return;
+  // Gruppen für diesen Verein laden (vid = vereinId substring)
+  // Finde die Gruppen aus dem gecachten loadVereine-Ergebnis
+  const {data:ms}=await supabaseClient.from('verein_mitglieder').select('verein_id').eq('nutzer_id',currentUser.id);
+  if(!ms||!ms.length){box.innerHTML='<div class="empty">Keine Gruppen.</div>';return;}
+  // Alle Trainer im Verein finden, dann deren Gruppen
+  const {data:allMs}=await supabaseClient.from('verein_mitglieder').select('nutzer_id, profile(id,rolle)').eq('verein_id',ms[0].verein_id);
+  const trainerIds=(allMs||[]).filter(m=>m.profile?.rolle==='trainer').map(m=>m.nutzer_id);
+  if(!trainerIds.length){box.innerHTML='<div class="empty">Noch keine Gruppen in diesem Verein.</div>';return;}
+  const {data:gt}=await supabaseClient.from('gruppe_trainer').select('gruppe_id, gruppen(id,name,einladungslink)').in('trainer_id',trainerIds);
+  const seen=new Set();const gruppen=[];
+  (gt||[]).forEach(({gruppen:g})=>{if(g&&!seen.has(g.id)){seen.add(g.id);gruppen.push(g);}});
+  if(!gruppen.length){box.innerHTML='<div class="empty">Noch keine Gruppen in diesem Verein.</div>';return;}
+  // Mitgliedschaften des aktuellen Nutzers laden
+  const {data:mitgl}=await supabaseClient.from('gruppe_mitglieder').select('gruppe_id').eq('athlet_id',currentUser.id);
+  const memberOf=new Set((mitgl||[]).map(m=>m.gruppe_id));
+  // Offene Anfragen laden
+  const {data:anfrg}=await supabaseClient.from('gruppe_anfragen').select('gruppe_id,status').eq('athlet_id',currentUser.id);
+  const anfrMap={};(anfrg||[]).forEach(a=>anfrMap[a.gruppe_id]=a.status);
+  const rolle=currentProfile?.rolle;
+  box.innerHTML=gruppen.map(g=>{
+    let action='';
+    if(rolle!=='trainer'){
+      if(memberOf.has(g.id)){action='<span style="font-size:11px;color:var(--green-mid);font-weight:500">Mitglied</span>';}
+      else if(anfrMap[g.id]==='pending'){action='<span style="font-size:11px;color:var(--text3)">Anfrage ausstehend</span>';}
+      else{action=`<button class="btn-fb" onclick="requestJoinGruppe('${g.id}','${g.name}')">Beitreten anfragen</button>`;}
+    } else {
+      action=`<button class="copy-btn" onclick="copyLink(window.location.origin+'?join=${g.einladungslink}',this)">Link</button>`;
+    }
+    return`<div class="gruppe-row"><div class="gruppe-disc">GRP</div><div class="rinfo"><div class="rname">${g.name}</div></div><div style="margin-left:auto">${action}</div></div>`;
+  }).join('');
+}
+
+async function loadTrainerAnfragen(gruppeId){
+  const section=document.getElementById('trainer-anfragen-section');
+  const list=document.getElementById('trainer-anfragen-list');
+  const {data:anfragen}=await supabaseClient.from('gruppe_anfragen').select('id,athlet_id,status,created_at').eq('gruppe_id',gruppeId).eq('status','pending');
+  if(!anfragen||!anfragen.length){section.style.display='none';return;}
+  section.style.display='block';
+  const ids=anfragen.map(a=>a.athlet_id);
+  const {data:profs}=await supabaseClient.from('profile').select('id,name').in('id',ids);
+  const profMap={};(profs||[]).forEach(p=>profMap[p.id]=p.name);
+  list.innerHTML=anfragen.map(a=>`<div class="rrow" style="flex-wrap:wrap"><div class="rdisc">${(profMap[a.athlet_id]||'?').substring(0,2).toUpperCase()}</div><div class="rinfo"><div class="rname">${profMap[a.athlet_id]||'Unbekannt'}</div><div class="rmeta">Möchte der Gruppe beitreten</div></div><div style="display:flex;gap:6px;margin-left:auto"><button class="copy-btn" style="background:var(--green);color:#fff;border-color:var(--green)" onclick="answerAnfrage('${a.id}','${a.athlet_id}','${gruppeId}','approved')">Annehmen</button><button class="copy-btn" style="color:#c62828;border-color:#ffcdd2" onclick="answerAnfrage('${a.id}','${a.athlet_id}','${gruppeId}','rejected')">Ablehnen</button></div></div>`).join('');
+}
+async function answerAnfrage(anfragenId,athletId,gruppeId,decision){
+  await supabaseClient.from('gruppe_anfragen').update({status:decision}).eq('id',anfragenId);
+  if(decision==='approved'){
+    await supabaseClient.from('gruppe_mitglieder').insert({gruppe_id:gruppeId,athlet_id:athletId,status:'aktiv'});
+  }
+  await loadTrainerAnfragen(gruppeId);
+  if(decision==='approved')await showGruppeAthleten(gruppeId,document.getElementById('trainer-gruppe-titel').textContent);
+}
+async function requestJoinGruppe(gruppeId,gruppeName){
+  const {error}=await supabaseClient.from('gruppe_anfragen').insert({gruppe_id:gruppeId,athlet_id:currentUser.id,status:'pending'});
+  if(error&&error.code!=='23505'){alert('Fehler: '+error.message);return;}
+  alert('Anfrage an Gruppe "'+gruppeName+'" gesendet! Der Trainer muss sie bestätigen.');
+  // Reload
+  const vid=document.querySelector('.verein-tab.active')?.closest('.verein-card')?.querySelector('[id^="vgruppen-content-"]')?.id?.replace('vgruppen-content-','');
+  if(vid)loadVereinGruppen(vid);
+  else loadVereine();
 }
 function filterMitglieder(vid,filter,el){
   document.querySelectorAll(`#vmitglieder-${vid} .vf-btn`).forEach(b=>b.classList.remove('active'));

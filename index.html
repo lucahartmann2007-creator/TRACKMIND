@@ -896,7 +896,28 @@ function setLoad(el,btn,on,msg='KI analysiert...'){
 }
 
 document.getElementById('et-date').valueAsDate=new Date();
-addAlRow();buildRechnerFields();
+document.getElementById('bw-date').valueAsDate=new Date();
+addAlRow();buildRechnerFields();renderBewertungen();
+
+// ── SESSION WIEDERHERSTELLEN ─────────────────────────────────────────────
+async function restoreSession() {
+  initSupabase();
+  if(!supabaseClient) return;
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if(!session) return; // kein gespeicherter Login → Login-Screen bleibt
+  currentSession = session;
+  currentUser = session.user;
+  // Profil laden
+  const { data: prof } = await supabaseClient
+    .from('profile')
+    .select('*')
+    .eq('id', currentUser.id)
+    .single();
+  currentProfile = prof;
+  await onLoginSuccess({ user: currentUser, session: currentSession, profile: prof });
+}
+
+restoreSession();
 </script>
 </body>
 </html>

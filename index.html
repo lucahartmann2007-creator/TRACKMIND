@@ -139,6 +139,18 @@
     .copy-btn{font-size:10px;padding:3px 8px;border-radius:6px;border:0.5px solid var(--green-border);background:var(--green-bg);color:var(--green-mid);cursor:pointer;white-space:nowrap;font-family:inherit}
     .join-box{background:var(--green-bg);border:0.5px solid var(--green-border);border-radius:12px;padding:14px 16px;margin-bottom:10px}
     .join-title{font-size:13px;font-weight:500;color:var(--green-mid);margin-bottom:6px}
+
+    /* Einstellungen */
+    .settings-section{margin-bottom:20px}
+    .settings-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+    .settings-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--border)}
+    .settings-row:last-child{border-bottom:none}
+    .settings-row-label{font-size:13px;color:var(--text1)}
+    .settings-row-val{font-size:12px;color:var(--text2)}
+    .btn-danger{background:transparent;color:#c62828;border:0.5px solid #ffcdd2;padding:9px 16px;border-radius:8px;font-size:13px;cursor:pointer;width:100%;margin-top:4px;font-family:inherit}
+    .btn-danger:hover{background:#fff0f0}
+    body.dark .btn-danger{color:#ef9a9a;border-color:#5c2020}
+    body.dark .btn-danger:hover{background:#2a1010}
   </style>
 </head>
 <body>
@@ -167,6 +179,7 @@
     <div id="nav-trainer" class="nav-item" style="display:none" onclick="nav('trainer',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Meine Gruppen</div>
     <div id="nav-gruppe" class="nav-item" style="display:none" onclick="nav('gruppe',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Meine Gruppe</div>
     <div class="nav-section">Tools</div>
+    <div class="nav-item" onclick="nav('einstellungen',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Einstellungen</div>
     <div class="nav-item" onclick="nav('mehrkampf',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Mehrkampfrechner</div>
   </div>
 
@@ -325,6 +338,47 @@
       <div class="card">
         <div class="card-title">Meine Mitgliedschaften</div>
         <div id="athlet-gruppen-list"><div class="empty">Du bist noch in keiner Gruppe.</div></div>
+      </div>
+    </div>
+
+
+    <!-- EINSTELLUNGEN -->
+    <div id="page-einstellungen" class="page">
+      <div class="page-title">Einstellungen</div>
+      <div class="page-sub">Konto & Profil verwalten</div>
+
+      <!-- Profil-Info -->
+      <div class="card">
+        <div class="settings-label">Mein Profil</div>
+        <div class="settings-row">
+          <div class="settings-row-label">Name</div>
+          <div class="settings-row-val" id="settings-name">–</div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-label">E-Mail</div>
+          <div class="settings-row-val" id="settings-email">–</div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-label">Rolle</div>
+          <div class="settings-row-val" id="settings-rolle">–</div>
+        </div>
+      </div>
+
+      <!-- Passwort ändern -->
+      <div class="card">
+        <div class="settings-label">Passwort ändern</div>
+        <div class="ig" style="margin-bottom:10px"><div class="il">Neues Passwort</div><input type="password" id="new-password" placeholder="mind. 6 Zeichen"/></div>
+        <div class="ig" style="margin-bottom:10px"><div class="il">Passwort bestätigen</div><input type="password" id="new-password-confirm" placeholder="Passwort wiederholen"/></div>
+        <div id="pw-success" style="display:none;font-size:12px;color:var(--green);margin-bottom:8px">Passwort erfolgreich geändert!</div>
+        <div id="pw-error" style="display:none;font-size:12px;color:#c62828;margin-bottom:8px"></div>
+        <button class="btn-p" onclick="changePassword()">Passwort speichern</button>
+      </div>
+
+      <!-- Abmelden -->
+      <div class="card">
+        <div class="settings-label">Sitzung</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Du wirst ausgeloggt und zum Login-Bildschirm weitergeleitet.</div>
+        <button class="btn-danger" onclick="doLogout()">Abmelden</button>
       </div>
     </div>
 
@@ -545,10 +599,36 @@ function nav(id,el){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');el.classList.add('active');
   if(id==='dashboard')updateDashboard();
+  if(id==='einstellungen')updateSettingsPage();
   if(id==='analyse')document.getElementById('an-list').innerHTML=results.length?results.map(r=>`<div class="rrow"><div class="rdisc">${r.disc.substring(0,3)}</div><div class="rinfo"><div class="rname">${r.disc}</div><div class="rmeta">${r.ak} · ${r.date}</div></div><div class="rval">${r.result}</div></div>`).join(''):'<div class="empty">Noch keine Ergebnisse.</div>';
   if(id==='mehrkampf')buildRechnerFields();
 }
 
+
+
+// ── EINSTELLUNGEN ────────────────────────────────────────────────────────
+
+function updateSettingsPage() {
+  if(!currentProfile || !currentUser) return;
+  document.getElementById('settings-name').textContent = currentProfile.name || '–';
+  document.getElementById('settings-email').textContent = currentUser.email || '–';
+  document.getElementById('settings-rolle').textContent = currentProfile.rolle === 'trainer' ? 'Trainer' : 'Athlet';
+}
+
+async function changePassword() {
+  const pw = document.getElementById('new-password').value;
+  const pw2 = document.getElementById('new-password-confirm').value;
+  const errEl = document.getElementById('pw-error');
+  const okEl = document.getElementById('pw-success');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+  if(!pw || pw.length < 6) { errEl.textContent = 'Passwort muss mind. 6 Zeichen haben.'; errEl.style.display = 'block'; return; }
+  if(pw !== pw2) { errEl.textContent = 'Passwörter stimmen nicht überein.'; errEl.style.display = 'block'; return; }
+  const { error } = await supabaseClient.auth.updateUser({ password: pw });
+  if(error) { errEl.textContent = 'Fehler: ' + error.message; errEl.style.display = 'block'; return; }
+  okEl.style.display = 'block';
+  document.getElementById('new-password').value = '';
+  document.getElementById('new-password-confirm').value = '';
+}
 
 // ── TRAINER PORTAL ───────────────────────────────────────────────────────
 

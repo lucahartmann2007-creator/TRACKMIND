@@ -370,9 +370,13 @@
         <button class="btn-p" onclick="createVerein()">Verein erstellen</button>
       </div>
       <div class="join-box">
-        <div class="join-title">Verein beitreten</div>
-        <div class="ig" style="margin-bottom:8px"><div class="il">Einladungscode</div><input type="text" id="verein-join-code" placeholder="Einladungscode eingeben"/></div>
-        <button class="btn-p" onclick="joinVerein()">Verein beitreten</button>
+        <div class="join-title">Verein suchen &amp; beitreten</div>
+        <div class="ig" style="margin-bottom:8px">
+          <div class="il">Vereinsname oder Einladungscode</div>
+          <input type="text" id="verein-join-code" placeholder="z.B. SC Eintracht oder Code eingeben" oninput="searchVereine(this.value)"/>
+        </div>
+        <div id="verein-search-results" style="display:none;margin-bottom:8px"></div>
+        <button class="btn-p" onclick="joinVereinByCode()">Per Code beitreten</button>
       </div>
       <div id="verein-list"><div class="empty">Du bist noch in keinem Verein.</div></div>
     </div>
@@ -487,7 +491,9 @@ async function doLogin(){
       showAuthError(msg);btn.disabled=false;btn.textContent='Einloggen';return;
     }
     const {data:prof}=await supabaseClient.from('profile').select('*').eq('id',data.user.id).single();
-    await onLoginSuccess({user:data.user,session:data.session,profile:prof});
+    currentProfile=prof;currentUser=data.user;currentSession=data.session;
+    await ensureProfile();
+    await onLoginSuccess({user:data.user,session:data.session,profile:currentProfile});
   }catch(e){showAuthError('Fehler: '+e.message);btn.disabled=false;btn.textContent='Einloggen';}
 }
 async function doRegister(){
@@ -528,6 +534,19 @@ async function doLogout(){
   document.getElementById('login-email').value='';document.getElementById('login-password').value='';
   switchAuthTab('login');
 }
+async function ensureProfile(){
+  if(currentProfile&&currentProfile.name)return;
+  try{
+    const {data:prof}=await supabaseClient.from('profile').select('*').eq('id',currentUser.id).single();
+    if(prof&&prof.name){currentProfile=prof;return;}
+    // Profil fehlt oder hat keinen Namen – aus Auth-Metadaten erstellen
+    const meta=currentUser.user_metadata||{};
+    const name=meta.name||currentUser.email?.split('@')[0]||'Nutzer';
+    const rolle=meta.rolle||'athlet';
+    await supabaseClient.from('profile').upsert({id:currentUser.id,name,rolle},{onConflict:'id'});
+    currentProfile={id:currentUser.id,name,rolle};
+  }catch(e){console.log('ensureProfile:',e.message);}
+}
 async function restoreSession(){
   try{
     initSupabase();if(!supabaseClient)return;
@@ -536,7 +555,8 @@ async function restoreSession(){
     currentSession=session;currentUser=session.user;
     const {data:prof}=await supabaseClient.from('profile').select('*').eq('id',currentUser.id).single();
     currentProfile=prof;
-    await onLoginSuccess({user:currentUser,session:currentSession,profile:prof});
+    await ensureProfile();
+    await onLoginSuccess({user:currentUser,session:currentSession,profile:currentProfile});
   }catch(e){console.log('Session restore:',e.message);}
 }
 async function loadAllData(){
@@ -719,7 +739,17 @@ async function loadAthletGruppen(){
 async function leaveAthletGruppe(gruppeId){if(!confirm('Gruppe wirklich verlassen?'))return;const {error}=await supabaseClient.from('gruppe_mitglieder').delete().eq('gruppe_id',gruppeId).eq('athlet_id',currentUser.id);if(error){alert('Fehler: '+error.message);return;}await loadAthletGruppen();}
 async function joinGruppe(){const code=document.getElementById('join-code').value.trim();if(!code){alert('Bitte einen Einladungscode eingeben.');return;}const {data:gruppe}=await supabaseClient.from('gruppen').select('id,name').eq('einladungslink',code).single();if(!gruppe){alert('Kein gültiger Einladungscode.');return;}const {error}=await supabaseClient.from('gruppe_mitglieder').insert({gruppe_id:gruppe.id,athlet_id:currentUser.id,status:'aktiv'});if(error&&error.code!=='23505'){alert('Fehler: '+error.message);return;}document.getElementById('join-code').value='';alert('Erfolgreich der Gruppe "'+gruppe.name+'" beigetreten!');await loadAthletGruppen();}
 async function createVerein(){const name=document.getElementById('neuer-verein-name').value.trim();if(!name){alert('Bitte einen Vereinsnamen eingeben.');return;}const {data:v,error}=await supabaseClient.from('vereine').insert({name,created_by:currentUser.id}).select().single();if(error){alert('Fehler: '+error.message);return;}await supabaseClient.from('verein_mitglieder').insert({verein_id:v.id,nutzer_id:currentUser.id});document.getElementById('neuer-verein-name').value='';await loadVereine();}
-async function joinVerein(){const code=document.getElementById('verein-join-code').value.trim();if(!code){alert('Bitte einen Einladungscode eingeben.');return;}const {data:v}=await supabaseClient.from('vereine').select('id,name').eq('einladungslink',code).single();if(!v){alert('Kein gültiger Einladungscode.');return;}const {error}=await supabaseClient.from('verein_mitglieder').insert({verein_id:v.id,nutzer_id:currentUser.id});if(error&&error.code!=='23505'){alert('Fehler: '+error.message);return;}document.getElementById('verein-join-code').value='';alert('Erfolgreich dem Verein "'+v.name+'" beigetreten!');await loadVereine();}
+async function joinVereinByCode(){const code=document.getElementById('verein-join-code').value.trim();if(!code){alert('Bitte einen Code oder Namen eingeben.');return;}const {data:v}=await supabaseClient.from('vereine').select('id,name').eq('einladungslink',code).single();if(!v){alert('Kein gültiger Einladungscode. Nutze die Suche oben um einen Verein nach Namen zu finden.');return;}await doJoinVerein(v.id,v.name);}
+async function doJoinVerein(vereinId,vereinName){const {error}=await supabaseClient.from('verein_mitglieder').insert({verein_id:vereinId,nutzer_id:currentUser.id});if(error&&error.code!=='23505'){alert('Fehler: '+error.message);return;}document.getElementById('verein-join-code').value='';document.getElementById('verein-search-results').style.display='none';alert('Erfolgreich dem Verein "'+vereinName+'" beigetreten!');await loadVereine();}
+async function searchVereine(query){
+  const box=document.getElementById('verein-search-results');
+  if(!query||query.length<2){box.style.display='none';return;}
+  const {data}=await supabaseClient.from('vereine').select('id,name').ilike('name','%'+query+'%').limit(5);
+  if(!data||!data.length){box.innerHTML='<div style="font-size:12px;color:var(--text3);padding:6px 0">Kein Verein gefunden.</div>';box.style.display='block';return;}
+  box.innerHTML=data.map(v=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--bg2);border-radius:8px;margin-bottom:4px;border:0.5px solid var(--border)"><span style="font-size:13px;color:var(--text1)">${v.name}</span><button class="btn-fb" onclick="doJoinVerein('${v.id}','${v.name}')">Beitreten</button></div>`).join('');
+  box.style.display='block';
+}
+async function joinVerein(){await joinVereinByCode();}
 async function leaveVerein(vereinId){if(!confirm('Verein wirklich verlassen?'))return;const {error}=await supabaseClient.from('verein_mitglieder').delete().eq('verein_id',vereinId).eq('nutzer_id',currentUser.id);if(error){alert('Fehler: '+error.message);return;}await loadVereine();}
 async function loadVereine(){
   if(!supabaseClient||!currentUser)return;

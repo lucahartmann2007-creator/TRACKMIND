@@ -437,6 +437,19 @@
         <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Du wirst ausgeloggt und zum Login-Bildschirm weitergeleitet.</div>
         <button class="btn-danger" onclick="doLogout()">Abmelden</button>
       </div>
+      <div class="card">
+        <div class="settings-label">Konto löschen</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Löscht dein Konto und alle deine Daten dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden.</div>
+        <div id="delete-confirm" style="display:none;margin-bottom:10px">
+          <div style="font-size:12px;font-weight:500;color:#c62828;margin-bottom:6px">Bist du sicher? Gib dein Passwort ein um zu bestätigen:</div>
+          <div class="ig" style="margin-bottom:8px"><input type="password" id="delete-password" placeholder="Dein Passwort"/></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn-o" style="margin-top:0" onclick="document.getElementById('delete-confirm').style.display='none'">Abbrechen</button>
+            <button class="btn-danger" style="margin-top:0" onclick="deleteAccount()">Konto endgültig löschen</button>
+          </div>
+        </div>
+        <button class="btn-danger" id="delete-show-btn" onclick="document.getElementById('delete-confirm').style.display='block';this.style.display='none'">Konto löschen</button>
+      </div>
     </div>
 
     <!-- MEHRKAMPFRECHNER -->
@@ -506,7 +519,14 @@ async function doLogin(){
   btn.disabled=true;btn.textContent='Wird eingeloggt...';
   try{
     const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
-    if(error){showAuthError(error.message);btn.disabled=false;btn.textContent='Einloggen';return;}
+    if(error){
+      const msg=error.message.includes('Email not confirmed')
+        ?'E-Mail noch nicht bestätigt. Bitte schau in deinem Postfach nach der Bestätigungsmail.'
+        :error.message.includes('Invalid login')||error.message.includes('invalid_credentials')
+        ?'E-Mail oder Passwort falsch.'
+        :error.message;
+      showAuthError(msg);btn.disabled=false;btn.textContent='Einloggen';return;
+    }
     const {data:prof}=await supabaseClient.from('profile').select('*').eq('id',data.user.id).single();
     await onLoginSuccess({user:data.user,session:data.session,profile:prof});
   }catch(e){
@@ -529,6 +549,15 @@ async function doRegister(){
     if(!userId){showAuthError('Kein User erstellt.');btn.disabled=false;btn.textContent='Konto erstellen';return;}
     const {error:pe}=await supabaseClient.from('profile').insert({id:userId,name,rolle:selectedRolle});
     if(pe){showAuthError('Profil-Fehler: '+pe.message);btn.disabled=false;btn.textContent='Konto erstellen';return;}
+    // Email-Verifikation: prüfen ob Bestätigung nötig
+    if(!data.session){
+      // Supabase hat keine Session zurückgegeben → Email-Verifikation aktiv
+      document.getElementById('auth-error').style.background='#f0faf5';
+      document.getElementById('auth-error').style.borderColor='var(--green-border)';
+      document.getElementById('auth-error').style.color='var(--green-mid)';
+      showAuthError('Konto erstellt! Bitte bestätige deine E-Mail-Adresse. Schau in deinem Postfach nach einer Mail von TrackMind.');
+      btn.disabled=false;btn.textContent='Konto erstellen';return;
+    }
     const {data:ld,error:le}=await supabaseClient.auth.signInWithPassword({email,password});
     if(le){showAuthError('Registriert! Bitte einloggen.');btn.disabled=false;btn.textContent='Konto erstellen';return;}
     await onLoginSuccess({user:ld.user,session:ld.session,profile:{id:userId,name,rolle:selectedRolle}});
@@ -831,10 +860,12 @@ function resetMk(){
 
 // ── EINSTELLUNGEN ────────────────────────────────────────────────────────
 async function updateSettingsPage(){
-  if(currentUser)document.getElementById('settings-email').textContent=currentUser.email||'–';
-  if(!currentProfile&&currentUser&&supabaseClient){
+  if(!currentUser)return;
+  document.getElementById('settings-email').textContent=currentUser.email||'–';
+  // Immer frisch laden damit nach Account-Wechsel keine alten Daten stehen
+  if(supabaseClient){
     const {data:prof}=await supabaseClient.from('profile').select('*').eq('id',currentUser.id).single();
-    if(prof)currentProfile=prof;
+    if(prof){currentProfile=prof;}
   }
   if(currentProfile){
     document.getElementById('settings-name').textContent=currentProfile.name||'–';
@@ -990,6 +1021,34 @@ async function joinGruppe(){
   document.getElementById('join-code').value='';
   alert('Erfolgreich der Gruppe "'+gruppe.name+'" beigetreten!');
   await loadAthletGruppen();
+}
+
+// ── KONTO LÖSCHEN ────────────────────────────────────────────────────────
+async function deleteAccount(){
+  const password=document.getElementById('delete-password').value;
+  if(!password){alert('Bitte Passwort eingeben.');return;}
+  if(!currentUser){return;}
+  // Erst Passwort prüfen durch erneuten Login
+  const {error:loginErr}=await supabaseClient.auth.signInWithPassword({
+    email:currentUser.email, password
+  });
+  if(loginErr){
+    alert('Falsches Passwort. Konto wurde nicht gelöscht.');return;
+  }
+  // Account über Backend löschen (braucht Admin-Key)
+  try{
+    const res=await fetch('/api/claude',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+(currentSession?.access_token||'')},
+      body:JSON.stringify({type:'delete_account',user_id:currentUser.id})
+    });
+    const data=await res.json();
+    if(data.error){alert('Fehler beim Löschen: '+data.error);return;}
+    alert('Dein Konto wurde erfolgreich gelöscht.');
+    await doLogout();
+  }catch(e){
+    alert('Fehler: '+e.message);
+  }
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────

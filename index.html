@@ -1004,10 +1004,17 @@ function filterDisc(idx,disc,el){
 // ── ATHLET GRUPPE ────────────────────────────────────────────────────────
 async function loadAthletGruppen(){
   if(!supabaseClient||!currentUser)return;
-  const {data}=await supabaseClient.from('gruppe_mitglieder').select('gruppe_id, gruppen(name, trainer_id, profile(name))').eq('athlet_id',currentUser.id);
+  const {data}=await supabaseClient.from('gruppe_mitglieder').select('gruppe_id, gruppen(id, name, trainer_id)').eq('athlet_id',currentUser.id);
   const list=document.getElementById('athlet-gruppen-list');
   if(!data||!data.length){list.innerHTML='<div class="empty">Du bist noch in keiner Gruppe.</div>';return;}
-  list.innerHTML=data.map(m=>`<div class="rrow"><div class="rdisc">GRP</div><div class="rinfo"><div class="rname">${m.gruppen?.name||'Gruppe'}</div><div class="rmeta">Trainer: ${m.gruppen?.profile?.name||'–'}</div></div></div>`).join('');
+  // Trainer-Profile separat laden
+  const trainerIds=[...new Set(data.map(m=>m.gruppen?.trainer_id).filter(Boolean))];
+  const trainerMap={};
+  if(trainerIds.length){
+    const {data:profiles}=await supabaseClient.from('profile').select('id,name').in('id',trainerIds);
+    (profiles||[]).forEach(p=>trainerMap[p.id]=p.name);
+  }
+  list.innerHTML=data.map(m=>`<div class="rrow"><div class="rdisc">GRP</div><div class="rinfo"><div class="rname">${m.gruppen?.name||'Gruppe'}</div><div class="rmeta">Trainer: ${trainerMap[m.gruppen?.trainer_id]||'–'}</div></div></div>`).join('');
 }
 
 async function joinGruppe(){

@@ -172,6 +172,15 @@
     .section-lbl{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin:10px 0 6px}
     .leave-btn{font-size:11px;padding:3px 8px;border-radius:6px;border:0.5px solid #ffcdd2;background:transparent;color:#c62828;cursor:pointer;font-family:inherit;white-space:nowrap}
     body.dark .leave-btn{border-color:#5c2020;color:#ef9a9a}
+    .verein-tabs{display:flex;border-bottom:0.5px solid var(--border);margin-bottom:12px}
+    .verein-tab{font-size:12px;padding:8px 14px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-0.5px;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none}
+    .verein-tab.active{color:var(--green-mid);border-bottom-color:var(--green);font-weight:500}
+    .verein-filter-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+    .vf-btn{font-size:11px;padding:3px 10px;border-radius:99px;border:0.5px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;font-family:inherit}
+    .vf-btn.active{background:var(--green);color:#fff;border-color:var(--green)}
+    .gruppe-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)}
+    .gruppe-row:last-child{border-bottom:none}
+    .gruppe-disc{width:34px;height:34px;border-radius:8px;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--green-mid);flex-shrink:0}
   </style>
 </head>
 <body>
@@ -756,7 +765,6 @@ async function loadVereine(){
   const {data:ms}=await supabaseClient.from('verein_mitglieder').select('verein_id, vereine(id,name,einladungslink,created_by)').eq('nutzer_id',currentUser.id);
   const list=document.getElementById('verein-list');
   const inVerein=ms&&ms.length>0;
-  // Erstellen/Suchen nur anzeigen wenn noch nicht in einem Verein
   document.getElementById('verein-create-card').style.display=inVerein?'none':'block';
   document.querySelector('.join-box').style.display=inVerein?'none':'block';
   if(!inVerein){list.innerHTML='<div class="empty">Du bist noch in keinem Verein.</div>';return;}
@@ -765,11 +773,62 @@ async function loadVereine(){
     const {data:mbs}=await supabaseClient.from('verein_mitglieder').select('nutzer_id').eq('verein_id',v.id);
     const ids=(mbs||[]).map(x=>x.nutzer_id);let profiles=[];
     if(ids.length){const {data:p}=await supabaseClient.from('profile').select('id,name,rolle').in('id',ids);profiles=p||[];}
-    const trainer=profiles.filter(p=>p.rolle==='trainer');const athleten=profiles.filter(p=>p.rolle==='athlet');
-    const isOwner=v.created_by===currentUser.id;const link=window.location.origin+'?verein='+v.einladungslink;
-    return`<div class="verein-card"><div class="verein-header"><div><div class="verein-name">${v.name}</div><div class="verein-meta">${trainer.length} Trainer · ${athleten.length} Athleten</div></div><button class="leave-btn" onclick="leaveVerein('${v.id}')">Verlassen</button></div><div class="verein-body">${isOwner?`<div style="margin-bottom:10px"><div class="section-lbl">Einladungslink</div><div class="gruppe-link-box"><div style="font-size:13px;font-weight:500;font-family:monospace;flex:1;word-break:break-all">${v.einladungslink}</div><button class="copy-btn" onclick="copyLink('${v.einladungslink}',this)">Code</button><button class="copy-btn" onclick="copyLink('${link}',this)">Link</button></div></div>`:''  }${trainer.length?`<div class="section-lbl">Trainer</div>${trainer.map(p=>`<div class="member-row"><div class="member-avatar">${p.name.substring(0,2).toUpperCase()}</div><div class="member-name">${p.name}</div><span class="rolle-pill rolle-trainer-pill">Trainer</span></div>`).join('')}`:''}${athleten.length?`<div class="section-lbl">Athleten</div>${athleten.map(p=>`<div class="member-row"><div class="member-avatar">${p.name.substring(0,2).toUpperCase()}</div><div class="member-name">${p.name}</div><span class="rolle-pill rolle-athlet-pill">Athlet</span></div>`).join('')}`:''}  </div></div>`;
+    const trainer=profiles.filter(p=>p.rolle==='trainer');
+    const athleten=profiles.filter(p=>p.rolle==='athlet');
+    const trainerIds=trainer.map(p=>p.id);
+    // Gruppen der Vereins-Trainer laden
+    let gruppen=[];
+    if(trainerIds.length){
+      const {data:gt}=await supabaseClient.from('gruppe_trainer').select('gruppe_id, gruppen(id,name,einladungslink)').in('trainer_id',trainerIds);
+      if(gt){const seen=new Set();(gt||[]).forEach(({gruppen:g})=>{if(g&&!seen.has(g.id)){seen.add(g.id);gruppen.push(g);}});}
+    }
+    const isOwner=v.created_by===currentUser.id;
+    const link=window.location.origin+'?verein='+v.einladungslink;
+    const vid=v.id.replace(/-/g,'').substring(0,8);
+    return`<div class="verein-card">
+      <div class="verein-header">
+        <div><div class="verein-name">${v.name}</div><div class="verein-meta">${trainer.length} Trainer · ${athleten.length} Athleten · ${gruppen.length} Gruppen</div></div>
+        <button class="leave-btn" onclick="leaveVerein('${v.id}')">Verlassen</button>
+      </div>
+      <div class="verein-body">
+        ${isOwner?`<div style="margin-bottom:10px"><div class="section-lbl">Einladungslink</div><div class="gruppe-link-box"><div style="font-size:13px;font-weight:500;font-family:monospace;flex:1;word-break:break-all">${v.einladungslink}</div><button class="copy-btn" onclick="copyLink('${v.einladungslink}',this)">Code</button><button class="copy-btn" onclick="copyLink('${link}',this)">Link</button></div></div>`:''}
+        <div class="verein-tabs">
+          <button class="verein-tab active" onclick="switchVereinTab('${vid}','mitglieder',this)">Mitglieder (${profiles.length})</button>
+          <button class="verein-tab" onclick="switchVereinTab('${vid}','gruppen',this)">Gruppen (${gruppen.length})</button>
+        </div>
+        <div id="vtab-mitglieder-${vid}">
+          <div class="verein-filter-row">
+            <button class="vf-btn active" onclick="filterMitglieder('${vid}','alle',this)">Alle</button>
+            <button class="vf-btn" onclick="filterMitglieder('${vid}','trainer',this)">Trainer</button>
+            <button class="vf-btn" onclick="filterMitglieder('${vid}','athlet',this)">Athleten</button>
+          </div>
+          <div id="vmitglieder-${vid}">
+            ${profiles.map(p=>`<div class="member-row" data-rolle="${p.rolle}"><div class="member-avatar">${p.name.substring(0,2).toUpperCase()}</div><div class="member-name">${p.name}</div><span class="rolle-pill ${p.rolle==='trainer'?'rolle-trainer-pill':'rolle-athlet-pill'}">${p.rolle==='trainer'?'Trainer':'Athlet'}</span></div>`).join('')}
+          </div>
+        </div>
+        <div id="vtab-gruppen-${vid}" style="display:none">
+          ${gruppen.length?gruppen.map(g=>`<div class="gruppe-row"><div class="gruppe-disc">GRP</div><div class="rinfo"><div class="rname">${g.name}</div></div>${currentProfile?.rolle!=='trainer'?`<button class="copy-btn" onclick="copyLink(window.location.origin+'?join=${g.einladungslink}',this)" style="margin-left:auto">Link</button>`:''}</div>`).join(''):'<div class="empty">Noch keine Gruppen in diesem Verein.</div>'}
+        </div>
+      </div>
+    </div>`;
   }));
   list.innerHTML=cards.join('');
+}
+function switchVereinTab(vid,tab,el){
+  const card=el.closest('.verein-card');
+  card.querySelectorAll('.verein-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('vtab-mitglieder-'+vid).style.display=tab==='mitglieder'?'block':'none';
+  document.getElementById('vtab-gruppen-'+vid).style.display=tab==='gruppen'?'block':'none';
+}
+function filterMitglieder(vid,filter,el){
+  document.querySelectorAll(`#vmitglieder-${vid} .vf-btn`).forEach(b=>b.classList.remove('active'));
+  // update filter buttons in the right container
+  el.closest('.verein-filter-row').querySelectorAll('.vf-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll(`#vmitglieder-${vid} .member-row`).forEach(row=>{
+    row.style.display=(filter==='alle'||row.dataset.rolle===filter)?'flex':'none';
+  });
 }
 async function deleteAccount(){const password=document.getElementById('delete-password').value;if(!password){alert('Bitte Passwort eingeben.');return;}if(!currentUser)return;const {error:loginErr}=await supabaseClient.auth.signInWithPassword({email:currentUser.email,password});if(loginErr){alert('Falsches Passwort.');return;}try{const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+(currentSession?.access_token||'')},body:JSON.stringify({type:'delete_account',user_id:currentUser.id})});const data=await res.json();if(data.error){alert('Fehler: '+data.error);return;}alert('Konto wurde gelöscht.');await doLogout();}catch(e){alert('Fehler: '+e.message);}}
 document.getElementById('et-date').valueAsDate=new Date();

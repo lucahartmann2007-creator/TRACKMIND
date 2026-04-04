@@ -160,5 +160,29 @@ export default async function handler(req, res) {
     return res.status(200).json(r.data);
   }
 
+  // ── DELETE ACCOUNT ────────────────────────────────────────────────────
+  if (type === "delete_account") {
+    const { user_id } = body;
+    if (!user_id) return res.status(400).json({ error: "Keine User-ID" });
+    try {
+      // Nutzer-Daten werden durch CASCADE automatisch gelöscht (profile → ergebnisse etc.)
+      // Nur den Auth-User müssen wir manuell löschen (braucht Admin-Key)
+      const r = await fetch(SUPA_URL + "/auth/v1/admin/users/" + user_id, {
+        method: "DELETE",
+        headers: {
+          "apikey": SUPA_KEY,
+          "Authorization": "Bearer " + SUPA_KEY,
+        },
+      });
+      if (!r.ok) {
+        const text = await r.text();
+        return res.status(400).json({ error: "Löschen fehlgeschlagen: " + text });
+      }
+      return res.status(200).json({ success: true });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
   return res.status(400).json({ error: "Unknown type: " + type });
 }

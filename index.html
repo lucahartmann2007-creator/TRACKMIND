@@ -658,10 +658,10 @@ async function setupNavForRole(){
   document.getElementById('nav-verein-section').style.display='block';
   document.getElementById('nav-verein').style.display='flex';
   document.getElementById('nav-gruppe-section').style.display='block';
+  document.getElementById('verein-create-card').style.display='block';
   if(rolle==='trainer'){
     document.getElementById('nav-trainer').style.display='flex';
     document.getElementById('nav-gruppe').style.display='none';
-    document.getElementById('verein-create-card').style.display='block';
     await loadTrainerGruppen();
   }else{
     document.getElementById('nav-gruppe').style.display='flex';

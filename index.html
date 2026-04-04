@@ -599,7 +599,7 @@ function nav(id,el){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');el.classList.add('active');
   if(id==='dashboard')updateDashboard();
-  if(id==='einstellungen')updateSettingsPage();
+  if(id==='einstellungen')updateSettingsPage().catch(()=>{});
   if(id==='analyse')document.getElementById('an-list').innerHTML=results.length?results.map(r=>`<div class="rrow"><div class="rdisc">${r.disc.substring(0,3)}</div><div class="rinfo"><div class="rname">${r.disc}</div><div class="rmeta">${r.ak} · ${r.date}</div></div><div class="rval">${r.result}</div></div>`).join(''):'<div class="empty">Noch keine Ergebnisse.</div>';
   if(id==='mehrkampf')buildRechnerFields();
 }
@@ -608,11 +608,21 @@ function nav(id,el){
 
 // ── EINSTELLUNGEN ────────────────────────────────────────────────────────
 
-function updateSettingsPage() {
-  if(!currentProfile || !currentUser) return;
-  document.getElementById('settings-name').textContent = currentProfile.name || '–';
-  document.getElementById('settings-email').textContent = currentUser.email || '–';
-  document.getElementById('settings-rolle').textContent = currentProfile.rolle === 'trainer' ? 'Trainer' : 'Athlet';
+async function updateSettingsPage() {
+  // E-Mail direkt aus currentUser (immer verfügbar wenn eingeloggt)
+  if(currentUser) {
+    document.getElementById('settings-email').textContent = currentUser.email || '–';
+  }
+  // Profil: falls noch nicht geladen, jetzt laden
+  if(!currentProfile && currentUser && supabaseClient) {
+    const { data: prof } = await supabaseClient
+      .from('profile').select('*').eq('id', currentUser.id).single();
+    if(prof) currentProfile = prof;
+  }
+  if(currentProfile) {
+    document.getElementById('settings-name').textContent = currentProfile.name || '–';
+    document.getElementById('settings-rolle').textContent = currentProfile.rolle === 'trainer' ? 'Trainer' : 'Athlet';
+  }
 }
 
 async function changePassword() {
@@ -901,20 +911,26 @@ addAlRow();buildRechnerFields();renderBewertungen();
 
 // ── SESSION WIEDERHERSTELLEN ─────────────────────────────────────────────
 async function restoreSession() {
-  initSupabase();
-  if(!supabaseClient) return;
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if(!session) return; // kein gespeicherter Login → Login-Screen bleibt
-  currentSession = session;
-  currentUser = session.user;
-  // Profil laden
-  const { data: prof } = await supabaseClient
-    .from('profile')
-    .select('*')
-    .eq('id', currentUser.id)
-    .single();
-  currentProfile = prof;
-  await onLoginSuccess({ user: currentUser, session: currentSession, profile: prof });
+  try {
+    initSupabase();
+    if(!supabaseClient) return;
+    const { data } = await supabaseClient.auth.getSession();
+    const session = data?.session;
+    if(!session) return;
+    currentSession = session;
+    currentUser = session.user;
+    // Profil laden
+    const { data: prof } = await supabaseClient
+      .from('profile')
+      .select('*')
+      .eq('id', currentUser.id)
+      .single();
+    currentProfile = prof;
+    await onLoginSuccess({ user: currentUser, session: currentSession, profile: prof });
+  } catch(e) {
+    // Session konnte nicht wiederhergestellt werden - Login-Screen bleibt
+    console.log('Session restore failed:', e.message);
+  }
 }
 
 restoreSession();

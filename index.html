@@ -114,87 +114,35 @@
     .anlauf-steps{font-size:14px;font-weight:500;color:var(--green);width:50px;flex-shrink:0}
     .anlauf-note{font-size:12px;color:var(--text2);line-height:1.4}
 
-    /* Trainings-Bewertung */
-    .bw-slider-group{margin-bottom:14px}
-    .bw-slider-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
-    .bw-slider-name{font-size:12px;font-weight:500;color:var(--text1)}
-    .bw-slider-desc{font-size:10px;color:var(--text3)}
-    .bw-val{font-size:16px;font-weight:500;color:var(--green);min-width:20px;text-align:right}
-    .bw-track{position:relative;height:28px;display:flex;align-items:center}
-    .bw-track input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:var(--bg3);outline:none;cursor:pointer}
-    .bw-track input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--green);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 1px 3px rgba(0,0,0,0.2)}
-    .bw-track input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--green);cursor:pointer;border:2px solid var(--bg2)}
-    .bw-ticks{display:flex;justify-content:space-between;padding:0 2px;margin-top:2px}
-    .bw-tick{font-size:9px;color:var(--text3)}
-    .bw-entry{background:var(--bg3);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;gap:10px;align-items:center}
-    .bw-entry-disc{font-size:12px;font-weight:500;color:var(--text1);flex:1}
-    .bw-entry-date{font-size:10px;color:var(--text3)}
-    .bw-bars{display:flex;gap:5px;align-items:flex-end;height:28px}
-    .bw-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:2px}
-    .bw-bar{width:16px;border-radius:3px 3px 0 0;background:var(--green);transition:height 0.2s}
-    .bw-bar-lbl{font-size:8px;color:var(--text3)}
-    .bw-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-    .bw-summary-item{background:var(--bg3);border-radius:8px;padding:8px 10px;text-align:center}
-    .bw-summary-val{font-size:18px;font-weight:500;color:var(--text1)}
-    .bw-summary-lbl{font-size:9px;color:var(--text3);margin-top:2px}
-    .trend-row{display:flex;gap:4px;align-items:flex-end;height:40px;margin-bottom:4px}
-    .trend-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px}
-    .trend-bar{width:100%;border-radius:2px 2px 0 0;min-height:2px}
-    .trend-lbl{font-size:8px;color:var(--text3)}
-
-    /* Login / Register Screen */
-    .auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000}
-    .auth-box{background:var(--card);border:0.5px solid var(--border);border-radius:16px;padding:28px 24px;width:100%;max-width:360px}
-    .auth-logo{font-size:20px;font-weight:600;color:var(--text1);margin-bottom:4px}
-    .auth-logo span{color:var(--green)}
-    .auth-sub{font-size:12px;color:var(--text2);margin-bottom:20px}
-    .auth-tabs{display:flex;gap:0;margin-bottom:20px;border:0.5px solid var(--border);border-radius:8px;overflow:hidden}
-    .auth-tab{flex:1;padding:8px;font-size:13px;text-align:center;cursor:pointer;color:var(--text2);background:transparent;border:none;font-family:inherit}
-    .auth-tab.active{background:var(--green);color:#fff;font-weight:500}
-    .auth-error{background:#fff0f0;border:0.5px solid #ffcdd2;border-radius:8px;padding:8px 12px;font-size:12px;color:#c62828;margin-bottom:10px;display:none}
-    body.dark .auth-error{background:#2a1010;border-color:#5c2020;color:#ef9a9a}
-    .auth-rolle{display:flex;gap:8px;margin-bottom:10px}
-    .rolle-btn{flex:1;padding:10px 8px;border:0.5px solid var(--border);border-radius:8px;font-size:12px;text-align:center;cursor:pointer;color:var(--text2);background:var(--bg3);font-family:inherit}
-    .rolle-btn.active{border-color:var(--green);background:var(--green-bg);color:var(--green-mid);font-weight:500}
-    .user-badge{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--green-bg);border-radius:8px;font-size:11px;color:var(--green-mid);margin-bottom:8px}
-    .logout-btn{font-size:11px;color:var(--text3);cursor:pointer;padding:4px 8px;border-radius:6px;border:0.5px solid var(--border);background:transparent;font-family:inherit}
-    .logout-btn:hover{background:var(--bg3)}
+    /* Trainer Portal */
+    .tp-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+    .tp-filter-btn{font-size:11px;padding:4px 10px;border-radius:99px;border:0.5px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;font-family:inherit}
+    .tp-filter-btn.active{background:var(--green);color:#fff;border-color:var(--green)}
+    .athlet-card{background:var(--card);border:0.5px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+    .athlet-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
+    .athlet-avatar{width:34px;height:34px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--green-mid);flex-shrink:0}
+    .athlet-name{font-size:13px;font-weight:500;color:var(--text1)}
+    .athlet-meta{font-size:10px;color:var(--text2);margin-top:1px}
+    .athlet-scores{display:flex;gap:8px;margin-left:auto;flex-shrink:0}
+    .athlet-score{text-align:center}
+    .athlet-score-val{font-size:13px;font-weight:500;color:var(--text1)}
+    .athlet-score-lbl{font-size:8px;color:var(--text3)}
+    .athlet-body{padding:0 14px 12px;border-top:0.5px solid var(--border);display:none}
+    .athlet-body.open{display:block}
+    .disc-filter{display:flex;gap:4px;flex-wrap:wrap;margin:10px 0 8px}
+    .disc-chip{font-size:10px;padding:2px 8px;border-radius:99px;border:0.5px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;font-family:inherit}
+    .disc-chip.active{background:var(--green-bg);color:var(--green-mid);border-color:var(--green-border)}
+    .gruppe-card{background:var(--card);border:0.5px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+    .gruppe-name{font-size:14px;font-weight:500;color:var(--text1);margin-bottom:4px}
+    .gruppe-link-box{display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:8px;padding:8px 10px;margin:8px 0}
+    .gruppe-link-code{font-size:12px;color:var(--text2);font-family:monospace;flex:1;word-break:break-all}
+    .copy-btn{font-size:10px;padding:3px 8px;border-radius:6px;border:0.5px solid var(--green-border);background:var(--green-bg);color:var(--green-mid);cursor:pointer;white-space:nowrap;font-family:inherit}
+    .join-box{background:var(--green-bg);border:0.5px solid var(--green-border);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+    .join-title{font-size:13px;font-weight:500;color:var(--green-mid);margin-bottom:6px}
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
-
-<div id="auth-screen" class="auth-screen">
-  <div class="auth-box">
-    <div class="auth-logo">Track<span>Mind</span></div>
-    <div class="auth-sub">Dein Leichtathletik-Begleiter</div>
-    <div class="auth-tabs">
-      <button id="atab-login" class="auth-tab atab active" onclick="switchAuthTab('login')">Einloggen</button>
-      <button id="atab-register" class="auth-tab atab" onclick="switchAuthTab('register')">Registrieren</button>
-    </div>
-    <div id="auth-error" class="auth-error"></div>
-    <!-- Login Form -->
-    <div id="auth-login-form">
-      <div class="ig" style="margin-bottom:10px"><div class="il">E-Mail</div><input type="email" id="login-email" placeholder="deine@email.de"/></div>
-      <div class="ig" style="margin-bottom:14px"><div class="il">Passwort</div><input type="password" id="login-password" placeholder="••••••••"/></div>
-      <button class="btn-p" id="login-btn" onclick="doLogin()">Einloggen</button>
-    </div>
-    <!-- Register Form -->
-    <div id="auth-register-form" style="display:none">
-      <div class="ig" style="margin-bottom:10px"><div class="il">Name</div><input type="text" id="reg-name" placeholder="Dein Name"/></div>
-      <div class="ig" style="margin-bottom:10px"><div class="il">E-Mail</div><input type="email" id="reg-email" placeholder="deine@email.de"/></div>
-      <div class="ig" style="margin-bottom:10px"><div class="il">Passwort</div><input type="password" id="reg-password" placeholder="mind. 6 Zeichen"/></div>
-      <div class="il" style="margin-bottom:6px">Ich bin...</div>
-      <div class="auth-rolle">
-        <button class="rolle-btn active" id="rolle-athlet" onclick="selectRolle('athlet')">🏃 Athlet</button>
-        <button class="rolle-btn" id="rolle-trainer" onclick="selectRolle('trainer')">📋 Trainer</button>
-      </div>
-      <button class="btn-p" id="register-btn" onclick="doRegister()">Konto erstellen</button>
-    </div>
-  </div>
-</div>
-
-<div class="app" id="main-app" style="display:none">
+<div class="app">
   <div class="sidebar">
     <div class="logo">
       <div>Track<span>Mind</span></div>
@@ -207,7 +155,6 @@
         </svg>
       </button>
     </div>
-    <div style="padding:8px 16px 0"><div id="user-badge" class="user-badge" style="display:none"><span id="user-name-badge">–</span><button class="logout-btn" onclick="doLogout()">Abmelden</button></div></div>
     <div class="nav-section">Athlet</div>
     <div class="nav-item active" onclick="nav('dashboard',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</div>
     <div class="nav-item" onclick="nav('eintragen',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Eintragen</div>
@@ -215,8 +162,10 @@
     <div class="nav-item" onclick="nav('analyse',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analyse</div>
     <div class="nav-section">Training</div>
     <div class="nav-item" onclick="nav('training',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Trainingsplan</div>
-    <div class="nav-item" onclick="nav('bewertung',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Einheit bewerten</div>
     <div class="nav-item" onclick="nav('upload',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Plan hochladen</div>
+    <div id="nav-gruppe-section" class="nav-section" style="display:none">Gruppe</div>
+    <div id="nav-trainer" class="nav-item" style="display:none" onclick="nav('trainer',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Meine Gruppen</div>
+    <div id="nav-gruppe" class="nav-item" style="display:none" onclick="nav('gruppe',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Meine Gruppe</div>
     <div class="nav-section">Tools</div>
     <div class="nav-item" onclick="nav('mehrkampf',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Mehrkampfrechner</div>
   </div>
@@ -231,11 +180,6 @@
         <div class="metric"><div class="metric-label">Einträge</div><div class="metric-value" id="db-count">0</div><div class="metric-sub">Ergebnisse</div></div>
         <div class="metric"><div class="metric-label">Bestes Ergebnis</div><div class="metric-value" id="db-best">–</div><div class="metric-sub" id="db-best-disc">kein Eintrag</div></div>
         <div class="metric"><div class="metric-label">Letzte Disziplin</div><div class="metric-value" id="db-last-disc" style="font-size:13px;padding-top:4px">–</div><div class="metric-sub" id="db-last-val">–</div></div>
-      </div>
-      <div class="metrics" style="margin-top:0">
-        <div class="metric"><div class="metric-label">Ø Belastung (7 Tage)</div><div class="metric-value" id="db-bw-belastung">–</div><div class="metric-sub">von 10</div></div>
-        <div class="metric"><div class="metric-label">Ø Energie (7 Tage)</div><div class="metric-value" id="db-bw-energie">–</div><div class="metric-sub">von 10</div></div>
-        <div class="metric"><div class="metric-label">Einheiten bewertet</div><div class="metric-value" id="db-bw-count">0</div><div class="metric-sub">gesamt</div></div>
       </div>
       <div class="card"><div class="card-title">Letzte Ergebnisse</div><div id="db-results"><div class="empty">Noch keine Ergebnisse.</div></div></div>
       <div class="card" id="tp-card" style="display:none"><div class="card-title">Trainingsplan vom Trainer</div><div class="ai-content" id="tp-content" style="color:var(--text1)"></div></div>
@@ -338,59 +282,49 @@
       </div>
     </div>
 
-    <!-- BEWERTUNG -->
-    <div id="page-bewertung" class="page">
-      <div class="page-title">Einheit bewerten</div>
-      <div class="page-sub">Wie war das Training? Ehrliche Einschätzung hilft langfristig.</div>
+
+    <!-- TRAINER PORTAL -->
+    <div id="page-trainer" class="page">
+      <div class="page-title">Meine Gruppen</div>
+      <div class="page-sub">Athleten verwalten und Leistungen einsehen</div>
+      <!-- Gruppe erstellen -->
       <div class="card">
-        <div class="form-grid" style="margin-bottom:12px">
-          <div class="ig"><div class="il">Disziplin / Einheit</div>
-            <select id="bw-disc">
-              <option>Sprint</option><option>Ausdauer</option><option>Sprung</option><option>Wurf</option>
-              <option>Krafttraining</option><option>Koordination</option><option>Regeneration</option><option>Wettkampf</option><option>Sonstiges</option>
-            </select>
-          </div>
-          <div class="ig"><div class="il">Datum</div><input type="date" id="bw-date"/></div>
+        <div class="card-title">Neue Gruppe erstellen</div>
+        <div class="form-grid" style="margin-bottom:8px">
+          <div class="ig" style="grid-column:1/-1"><div class="il">Gruppenname</div><input type="text" id="neue-gruppe-name" placeholder="z.B. Sprint U18 Männer"/></div>
         </div>
-        <div class="bw-slider-group">
-          <div class="bw-slider-label">
-            <div><div class="bw-slider-name">Belastung (RPE)</div><div class="bw-slider-desc">Wie anstrengend war die Einheit?</div></div>
-            <div class="bw-val" id="bw-belastung-val">5</div>
-          </div>
-          <div class="bw-track"><input type="range" id="bw-belastung" min="1" max="10" value="5" oninput="document.getElementById('bw-belastung-val').textContent=this.value;updateBwColor('bw-belastung',this.value)"/></div>
-          <div class="bw-ticks"><span class="bw-tick">1 locker</span><span class="bw-tick">5 mittel</span><span class="bw-tick">10 maximal</span></div>
-        </div>
-        <div class="bw-slider-group">
-          <div class="bw-slider-label">
-            <div><div class="bw-slider-name">Energie</div><div class="bw-slider-desc">Wie viel Energie hattest du zu Beginn?</div></div>
-            <div class="bw-val" id="bw-energie-val">5</div>
-          </div>
-          <div class="bw-track"><input type="range" id="bw-energie" min="1" max="10" value="5" oninput="document.getElementById('bw-energie-val').textContent=this.value;updateBwColor('bw-energie',this.value)"/></div>
-          <div class="bw-ticks"><span class="bw-tick">1 erschöpft</span><span class="bw-tick">5 okay</span><span class="bw-tick">10 top</span></div>
-        </div>
-        <div class="bw-slider-group">
-          <div class="bw-slider-label">
-            <div><div class="bw-slider-name">Gefühl</div><div class="bw-slider-desc">Wie gut hat sich Bewegung/Technik angefühlt?</div></div>
-            <div class="bw-val" id="bw-gefuehl-val">5</div>
-          </div>
-          <div class="bw-track"><input type="range" id="bw-gefuehl" min="1" max="10" value="5" oninput="document.getElementById('bw-gefuehl-val').textContent=this.value;updateBwColor('bw-gefuehl',this.value)"/></div>
-          <div class="bw-ticks"><span class="bw-tick">1 schlecht</span><span class="bw-tick">5 ok</span><span class="bw-tick">10 perfekt</span></div>
-        </div>
-        <div class="ig" style="margin-bottom:12px"><div class="il">Notiz (optional)</div><textarea id="bw-notes" placeholder="Was lief gut? Was war schwierig?"></textarea></div>
-        <button class="btn-p" onclick="saveBewertung()">Bewertung speichern</button>
+        <button class="btn-p" onclick="createGruppe()">Gruppe erstellen</button>
       </div>
-      <div class="card" id="bw-history-card">
-        <div class="card-title">Verlauf</div>
-        <div id="bw-trend-wrap" style="display:none;margin-bottom:12px">
-          <div style="font-size:10px;color:var(--text3);margin-bottom:4px">Letzte 10 Einheiten — Belastung / Energie / Gefühl</div>
-          <div id="bw-trend-chart" class="trend-row"></div>
+      <!-- Gruppen-Liste -->
+      <div id="trainer-gruppen-list"><div class="empty">Noch keine Gruppen erstellt.</div></div>
+      <!-- Athleten-Übersicht (wird nach Gruppenauswahl gezeigt) -->
+      <div id="trainer-athleten-section" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px">
+          <div class="page-title" id="trainer-gruppe-titel">Athleten</div>
         </div>
-        <div class="bw-summary">
-          <div class="bw-summary-item"><div class="bw-summary-val" id="bw-avg-belastung">–</div><div class="bw-summary-lbl">Ø Belastung</div></div>
-          <div class="bw-summary-item"><div class="bw-summary-val" id="bw-avg-energie">–</div><div class="bw-summary-lbl">Ø Energie</div></div>
-          <div class="bw-summary-item"><div class="bw-summary-val" id="bw-avg-gefuehl">–</div><div class="bw-summary-lbl">Ø Gefühl</div></div>
+        <div class="tp-filter">
+          <button class="tp-filter-btn active" onclick="setZeitraum('30',this)">30 Tage</button>
+          <button class="tp-filter-btn" onclick="setZeitraum('180',this)">6 Monate</button>
+          <button class="tp-filter-btn" onclick="setZeitraum('365',this)">1 Jahr</button>
+          <button class="tp-filter-btn" onclick="setZeitraum('saison',this)">Diese Saison</button>
+          <button class="tp-filter-btn" onclick="setZeitraum('all',this)">Gesamt</button>
         </div>
-        <div id="bw-list"><div class="empty">Noch keine Bewertungen.</div></div>
+        <div id="trainer-athleten-list"><div class="empty">Keine Athleten in dieser Gruppe.</div></div>
+      </div>
+    </div>
+
+    <!-- ATHLET: GRUPPE -->
+    <div id="page-gruppe" class="page">
+      <div class="page-title">Meine Gruppe</div>
+      <div class="page-sub">Einer Trainingsgruppe beitreten</div>
+      <div class="join-box">
+        <div class="join-title">Per Einladungslink beitreten</div>
+        <div class="ig" style="margin-bottom:8px"><div class="il">Einladungscode</div><input type="text" id="join-code" placeholder="z.B. a3f9c2b1d4e8"/></div>
+        <button class="btn-p" onclick="joinGruppe()">Gruppe beitreten</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Meine Mitgliedschaften</div>
+        <div id="athlet-gruppen-list"><div class="empty">Du bist noch in keiner Gruppe.</div></div>
       </div>
     </div>
 
@@ -416,149 +350,7 @@
 </div>
 
 <script>
-let results=[],anlaufNotes=[],bewertungen=[],trainerPlanText='',currentMkTab='zehn',isDark=false,alRowCount=0;
-let currentUser=null, currentSession=null, currentProfile=null, selectedRolle='athlet';
-let supabaseClient=null;
-
-function initSupabase(){
-  const url = 'https://vpfxcdjagqtgduieyunr.supabase.co';
-  const key = 'sb_publishable_fLMpBCUkFIN4YlEoEZ3ZAg_g5rieJJI';
-  if(window.supabase && url && key && key !== 'SUPABASE_PUBLISHABLE_KEY_PLACEHOLDER'){
-    supabaseClient = window.supabase.createClient(url, key);
-  }
-}
-
-// ── AUTH FUNKTIONEN ──────────────────────────────────────────────────────
-
-function switchAuthTab(tab){
-  const isLogin = tab==='login';
-  document.getElementById('auth-login-form').style.display = isLogin ? 'block' : 'none';
-  document.getElementById('auth-register-form').style.display = isLogin ? 'none' : 'block';
-  document.getElementById('atab-login').classList.toggle('active', isLogin);
-  document.getElementById('atab-register').classList.toggle('active', !isLogin);
-  document.getElementById('auth-error').style.display = 'none';
-}
-
-function selectRolle(rolle){
-  selectedRolle=rolle;
-  document.getElementById('rolle-athlet').classList.toggle('active',rolle==='athlet');
-  document.getElementById('rolle-trainer').classList.toggle('active',rolle==='trainer');
-}
-
-function showAuthError(msg){
-  const el=document.getElementById('auth-error');
-  el.textContent=msg;el.style.display='block';
-}
-
-async function doLogin(){
-  const email=document.getElementById('login-email').value.trim();
-  const password=document.getElementById('login-password').value;
-  if(!email||!password){showAuthError('Bitte alle Felder ausfüllen.');return;}
-  const btn=document.getElementById('login-btn');
-  btn.disabled=true;btn.textContent='Wird eingeloggt...';
-  try{
-    if(!supabaseClient){showAuthError('Supabase nicht initialisiert.');btn.disabled=false;btn.textContent='Einloggen';return;}
-    const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
-    if(error){showAuthError(error.message);btn.disabled=false;btn.textContent='Einloggen';return;}
-    currentUser=data.user;currentSession=data.session;
-    const {data:prof}=await supabaseClient.from('profile').select('*').eq('id',data.user.id).single();
-    currentProfile=prof;
-    await onLoginSuccess({user:data.user,session:data.session,profile:prof});
-  }catch(e){
-    showAuthError('Fehler: '+e.message);
-    btn.disabled=false;btn.textContent='Einloggen';
-  }
-}
-
-async function doRegister(){
-  const name=document.getElementById('reg-name').value.trim();
-  const email=document.getElementById('reg-email').value.trim();
-  const password=document.getElementById('reg-password').value;
-  if(!name||!email||!password){showAuthError('Bitte alle Felder ausfüllen.');return;}
-  if(password.length<6){showAuthError('Passwort muss mind. 6 Zeichen haben.');return;}
-  const btn=document.getElementById('register-btn');
-  btn.disabled=true;btn.textContent='Wird erstellt...';
-  try{
-    if(!supabaseClient){showAuthError('Supabase nicht initialisiert.');btn.disabled=false;btn.textContent='Konto erstellen';return;}
-    const {data,error}=await supabaseClient.auth.signUp({email,password});
-    if(error){showAuthError(error.message);btn.disabled=false;btn.textContent='Konto erstellen';return;}
-    const userId=data.user?.id;
-    if(!userId){showAuthError('Kein User erstellt.');btn.disabled=false;btn.textContent='Konto erstellen';return;}
-    // Profil anlegen
-    const {error:profErr}=await supabaseClient.from('profile').insert({id:userId,name,rolle:selectedRolle});
-    if(profErr){showAuthError('Profil-Fehler: '+profErr.message);btn.disabled=false;btn.textContent='Konto erstellen';return;}
-    // Direkt einloggen
-    const {data:loginData,error:loginErr}=await supabaseClient.auth.signInWithPassword({email,password});
-    if(loginErr){showAuthError('Registriert! Bitte einloggen.');btn.disabled=false;btn.textContent='Konto erstellen';return;}
-    currentUser=loginData.user;currentSession=loginData.session;
-    currentProfile={id:userId,name,rolle:selectedRolle};
-    await onLoginSuccess({user:loginData.user,session:loginData.session,profile:currentProfile});
-  }catch(e){
-    showAuthError('Fehler: '+e.message);
-    btn.disabled=false;btn.textContent='Konto erstellen';
-  }
-}
-
-async function onLoginSuccess(res){
-  currentUser=res.user;
-  currentSession=res.session;
-  if(res.profile) currentProfile=res.profile;
-  // Badge anzeigen
-  const name=currentProfile?.name||currentUser.email;
-  const rolle=currentProfile?.rolle||'athlet';
-  document.getElementById('user-badge').style.display='flex';
-  document.getElementById('user-name-badge').textContent=name+' ('+(rolle==='trainer'?'Trainer':'Athlet')+')';
-  // Auth-Screen ausblenden, App einblenden
-  document.getElementById('auth-screen').style.display='none';
-  document.getElementById('main-app').style.display='flex';
-  // Daten aus Supabase laden
-  await loadAllData();
-  updateDashboard();
-}
-
-function doLogout(){
-  currentUser=null;currentSession=null;currentProfile=null;
-  results=[];bewertungen=[];anlaufNotes=[];
-  document.getElementById('auth-screen').style.display='flex';
-  document.getElementById('main-app').style.display='none';
-  document.getElementById('user-badge').style.display='none';
-}
-
-// ── DATEN LADEN ──────────────────────────────────────────────────────────
-
-async function loadAllData(){
-  if(!currentUser||!supabaseClient)return;
-  const [{data:ergebnisse},{data:bwData},{data:anlaufData}]=await Promise.all([
-    supabaseClient.from('ergebnisse').select('*').eq('nutzer_id',currentUser.id).order('datum',{ascending:false}),
-    supabaseClient.from('bewertungen').select('*').eq('nutzer_id',currentUser.id).order('datum',{ascending:false}),
-    supabaseClient.from('anlaeufe').select('*').eq('nutzer_id',currentUser.id).order('created_at',{ascending:false}),
-  ]);
-  if(Array.isArray(ergebnisse)) results=ergebnisse.map(r=>({
-    disc:r.disziplin,result:r.ergebnis,type:r.typ,ak:r.altersklasse,date:r.datum,notes:r.notizen,id:r.id
-  }));
-  if(Array.isArray(bwData)) bewertungen=bwData.map(b=>({
-    datum:b.datum,disziplin:b.disziplin,belastung:b.belastung,energie:b.energie,gefuehl:b.gefuehl,notiz:b.notiz,id:b.id
-  }));
-  if(Array.isArray(anlaufData)){
-    // Anläufe nach Disziplin gruppieren
-    const grouped={};
-    anlaufData.forEach(a=>{
-      if(!grouped[a.disziplin])grouped[a.disziplin]={disc:a.disziplin,entries:[]};
-      grouped[a.disziplin].entries.push({type:a.typ,steps:a.schritte,note:a.notiz});
-    });
-    anlaufNotes=Object.values(grouped);
-  }
-  renderEtList();renderBewertungen();renderAlList();
-}
-
-// ── API HELPER ───────────────────────────────────────────────────────────
-
-async function apiCall(body){
-  const headers={'Content-Type':'application/json'};
-  if(currentSession)headers['Authorization']='Bearer '+currentSession.access_token;
-  const res=await fetch('/api/claude',{method:'POST',headers,body:JSON.stringify(body)});
-  return res.json();
-}
+let results=[],anlaufNotes=[],trainerPlanText='',currentMkTab='zehn',isDark=false,alRowCount=0;
 
 const IAAF_ZEHN={'100m':{A:25.4347,B:18.0,C:1.81,t:true},'Weitsprung':{A:0.14354,B:220,C:1.40,t:false},'Kugelstoß':{A:51.39,B:1.5,C:1.05,t:false},'Hochsprung':{A:0.8465,B:75.0,C:1.42,t:false},'400m':{A:1.53775,B:82.0,C:1.81,t:true},'110m Hürden':{A:5.74352,B:28.5,C:1.92,t:true},'Diskuswurf':{A:12.91,B:4.0,C:1.10,t:false},'Stabhochsprung':{A:0.2797,B:100,C:1.35,t:false},'Speerwurf':{A:10.14,B:7.0,C:1.08,t:false},'1500m':{A:0.03768,B:480,C:1.85,t:true}};
 const IAAF_SIEBEN={'100m Hürden':{A:9.23076,B:26.7,C:1.835,t:true},'Hochsprung':{A:1.84523,B:75.0,C:1.348,t:false},'Kugelstoß':{A:56.0211,B:1.5,C:1.05,t:false},'200m':{A:4.99087,B:42.5,C:1.81,t:true},'Weitsprung':{A:0.188807,B:210,C:1.41,t:false},'Speerwurf':{A:15.9803,B:3.8,C:1.04,t:false},'800m':{A:0.11193,B:254,C:1.88,t:true}};
@@ -608,21 +400,16 @@ function updateMkTotal(){
   document.getElementById('et-mk-total').textContent=t;
 }
 
-async function saveResult(){
-  const disc=document.getElementById('et-disc').value,type=document.getElementById('et-type').value,ak=document.getElementById('et-ak').value,date=document.getElementById('et-date').value||new Date().toISOString().split('T')[0],notes=document.getElementById('et-notes').value.trim();
+function saveResult(){
+  const disc=document.getElementById('et-disc').value,type=document.getElementById('et-type').value,ak=document.getElementById('et-ak').value,date=document.getElementById('et-date').value||'heute',notes=document.getElementById('et-notes').value.trim();
   const isM=disc==='Zehnkampf'||disc==='Siebenkampf';
-  const toSave=[];
   if(isM){
-    toSave.push({disc,type,result:document.getElementById('et-mk-total').textContent+' Pkt',date,ak,notes});
-    document.querySelectorAll('.mk-val').forEach(i=>{const v=i.value.trim();if(v)toSave.push({disc:i.dataset.disc,type,result:v,date,ak,notes:'Aus '+disc});});
+    results.push({disc,type,result:document.getElementById('et-mk-total').textContent+' Pkt',date,ak,notes});
+    document.querySelectorAll('.mk-val').forEach(i=>{const v=i.value.trim();if(v)results.push({disc:i.dataset.disc,type,result:v,date,ak,notes:'Aus '+disc});});
   } else {
     const r=document.getElementById('et-result').value.trim();
     if(!r){alert('Bitte Ergebnis eingeben.');return;}
-    toSave.push({disc,type,result:r,date,ak,notes});
-  }
-  for(const e of toSave){
-    results.push(e);
-    if(currentUser&&supabaseClient) await supabaseClient.from('ergebnisse').insert({nutzer_id:currentUser.id,disziplin:e.disc,ergebnis:e.result,typ:e.type,altersklasse:e.ak,datum:e.date,notizen:e.notes});
+    results.push({disc,type,result:r,date,ak,notes});
   }
   document.getElementById('et-result').value='';document.getElementById('et-notes').value='';
   document.querySelectorAll('.mk-val').forEach(i=>i.value='');
@@ -676,19 +463,6 @@ function renderAlList(){
 
 function updateDashboard(){
   document.getElementById('db-count').textContent=results.length;
-  // Bewertung metrics
-  document.getElementById('db-bw-count').textContent=bewertungen.length;
-  const now=new Date(),week=7*24*60*60*1000;
-  const recent=bewertungen.filter(b=>(now-new Date(b.datum))<=week);
-  if(recent.length){
-    const avgB=(recent.reduce((s,b)=>s+b.belastung,0)/recent.length).toFixed(1);
-    const avgE=(recent.reduce((s,b)=>s+b.energie,0)/recent.length).toFixed(1);
-    document.getElementById('db-bw-belastung').textContent=avgB;
-    document.getElementById('db-bw-energie').textContent=avgE;
-  } else {
-    document.getElementById('db-bw-belastung').textContent='–';
-    document.getElementById('db-bw-energie').textContent='–';
-  }
   if(!results.length){['db-best','db-last-disc','db-last-val'].forEach(id=>document.getElementById(id).textContent='–');document.getElementById('db-best-disc').textContent='kein Eintrag';document.getElementById('db-results').innerHTML='<div class="empty">Noch keine Ergebnisse.</div>';return;}
   const last=results[results.length-1];
   document.getElementById('db-last-disc').textContent=last.disc;document.getElementById('db-last-val').textContent=last.result;
@@ -775,89 +549,274 @@ function nav(id,el){
   if(id==='mehrkampf')buildRechnerFields();
 }
 
-function updateBwColor(id,val){
-  const el=document.getElementById(id);
-  const v=parseInt(val);
-  if(v<=3)el.style.background='linear-gradient(to right,var(--bg3) '+((v-1)/9*100)+'%,var(--bg3))';
-  const colors=['#1D9E75','#1D9E75','#1D9E75','#f0a500','#f0a500','#f0a500','#f0a500','#e05c2a','#e05c2a','#e05c2a'];
-  document.getElementById(id.replace('bw-','bw-')+'').style.color=colors[v-1]||'var(--green)';
+
+// ── TRAINER PORTAL ───────────────────────────────────────────────────────
+
+let aktiveGruppeId = null, aktiverZeitraum = '30', trainerAthleten = [];
+
+function getZeitraumDatum(z) {
+  const now = new Date();
+  if(z === 'all') return null;
+  if(z === 'saison') {
+    const m = now.getMonth();
+    const y = now.getFullYear();
+    // Halle: Nov-Feb, Freiland: Mär-Okt
+    if(m >= 10) return new Date(y, 10, 1).toISOString().split('T')[0];
+    if(m <= 1) return new Date(y-1, 10, 1).toISOString().split('T')[0];
+    return new Date(y, 2, 1).toISOString().split('T')[0];
+  }
+  const days = parseInt(z);
+  const d = new Date(now - days * 24*60*60*1000);
+  return d.toISOString().split('T')[0];
 }
 
-async function saveBewertung(){
-  const disc=document.getElementById('bw-disc').value;
-  const date=document.getElementById('bw-date').value;
-  if(!date){alert('Bitte Datum auswählen.');return;}
-  const b={
-    datum:date,
-    disziplin:disc,
-    belastung:parseInt(document.getElementById('bw-belastung').value),
-    energie:parseInt(document.getElementById('bw-energie').value),
-    gefuehl:parseInt(document.getElementById('bw-gefuehl').value),
-    notiz:document.getElementById('bw-notes').value.trim()
-  };
-  bewertungen.push(b);
-  if(currentUser&&supabaseClient) await supabaseClient.from('bewertungen').insert({nutzer_id:currentUser.id,datum:b.datum,disziplin:b.disziplin,belastung:b.belastung,energie:b.energie,gefuehl:b.gefuehl,notiz:b.notiz});
-  document.getElementById('bw-notes').value='';
-  document.getElementById('bw-belastung').value=5;document.getElementById('bw-belastung-val').textContent='5';
-  document.getElementById('bw-energie').value=5;document.getElementById('bw-energie-val').textContent='5';
-  document.getElementById('bw-gefuehl').value=5;document.getElementById('bw-gefuehl-val').textContent='5';
-  renderBewertungen();
+function setZeitraum(z, el) {
+  aktiverZeitraum = z;
+  document.querySelectorAll('.tp-filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderTrainerAthleten();
 }
 
-function renderBewertungen(){
-  const list=document.getElementById('bw-list');
-  if(!bewertungen.length){list.innerHTML='<div class="empty">Noch keine Bewertungen.</div>';return;}
-  // averages
-  const avg=k=>(bewertungen.reduce((s,b)=>s+b[k],0)/bewertungen.length).toFixed(1);
-  document.getElementById('bw-avg-belastung').textContent=avg('belastung');
-  document.getElementById('bw-avg-energie').textContent=avg('energie');
-  document.getElementById('bw-avg-gefuehl').textContent=avg('gefuehl');
-  // trend chart (last 10)
-  const last10=bewertungen.slice(-10);
-  document.getElementById('bw-trend-wrap').style.display='block';
-  document.getElementById('bw-trend-chart').innerHTML=last10.map(b=>`
-    <div class="trend-col">
-      <div style="display:flex;flex-direction:column;gap:1px;align-items:center;height:36px;justify-content:flex-end">
-        <div class="trend-bar" style="width:10px;height:${Math.round(b.belastung/10*34)}px;background:#e05c2a;opacity:0.8;border-radius:2px 2px 0 0"></div>
+async function setupNavForRole() {
+  const rolle = currentProfile?.rolle;
+  const gruppeSection = document.getElementById('nav-gruppe-section');
+  const navTrainer = document.getElementById('nav-trainer');
+  const navGruppe = document.getElementById('nav-gruppe');
+  if(rolle === 'trainer') {
+    gruppeSection.style.display = 'block';
+    navTrainer.style.display = 'flex';
+    navGruppe.style.display = 'none';
+    await loadTrainerGruppen();
+  } else {
+    gruppeSection.style.display = 'block';
+    navGruppe.style.display = 'flex';
+    navTrainer.style.display = 'none';
+    await loadAthletGruppen();
+  }
+  // URL-Join prüfen
+  const params = new URLSearchParams(window.location.search);
+  const joinCode = params.get('join');
+  if(joinCode && rolle === 'athlet') {
+    document.getElementById('join-code').value = joinCode;
+    nav('gruppe', document.getElementById('nav-gruppe'));
+  }
+}
+
+async function createGruppe() {
+  const name = document.getElementById('neue-gruppe-name').value.trim();
+  if(!name) { alert('Bitte einen Gruppennamen eingeben.'); return; }
+  if(!supabaseClient || !currentUser) return;
+  const { data, error } = await supabaseClient
+    .from('gruppen')
+    .insert({ name, trainer_id: currentUser.id })
+    .select().single();
+  if(error) { alert('Fehler: ' + error.message); return; }
+  document.getElementById('neue-gruppe-name').value = '';
+  await loadTrainerGruppen();
+}
+
+async function loadTrainerGruppen() {
+  if(!supabaseClient || !currentUser) return;
+  const { data: gruppen } = await supabaseClient
+    .from('gruppen')
+    .select('*')
+    .eq('trainer_id', currentUser.id)
+    .order('created_at', { ascending: false });
+  const list = document.getElementById('trainer-gruppen-list');
+  if(!gruppen || !gruppen.length) {
+    list.innerHTML = '<div class="empty">Noch keine Gruppen. Erstelle deine erste Gruppe oben.</div>';
+    return;
+  }
+  list.innerHTML = gruppen.map(g => {
+    const link = window.location.origin + '?join=' + g.einladungslink;
+    return `<div class="gruppe-card">
+      <div class="gruppe-name">${g.name}</div>
+      <div class="gruppe-link-box">
+        <div class="gruppe-link-code">${link}</div>
+        <button class="copy-btn" onclick="copyLink('${link}',this)">Kopieren</button>
       </div>
-      <div style="display:flex;flex-direction:column;gap:1px;align-items:center">
-        <div class="trend-bar" style="width:10px;height:${Math.round(b.energie/10*18)}px;background:#1D9E75;opacity:0.8;border-radius:2px 2px 0 0"></div>
-      </div>
-      <div class="trend-lbl">${b.disziplin.substring(0,3)}</div>
-    </div>`).join('');
-  // list
-  list.innerHTML=bewertungen.slice().reverse().map(b=>{
-    const bColor=b.belastung>=8?'#e05c2a':b.belastung>=5?'#f0a500':'#1D9E75';
-    const eColor=b.energie>=7?'#1D9E75':b.energie>=4?'#f0a500':'#e05c2a';
-    return`<div class="bw-entry">
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
-          <span class="bw-entry-disc">${b.disziplin}</span>
-          <span class="bw-entry-date">${b.datum}</span>
+      <button class="btn-o" style="margin-top:4px" onclick="showGruppeAthleten('${g.id}','${g.name}')">Athleten anzeigen →</button>
+    </div>`;
+  }).join('');
+}
+
+function copyLink(link, btn) {
+  navigator.clipboard.writeText(link).then(() => {
+    btn.textContent = 'Kopiert!';
+    setTimeout(() => btn.textContent = 'Kopieren', 2000);
+  });
+}
+
+async function showGruppeAthleten(gruppeId, gruppeName) {
+  aktiveGruppeId = gruppeId;
+  document.getElementById('trainer-gruppe-titel').textContent = gruppeName;
+  document.getElementById('trainer-athleten-section').style.display = 'block';
+  // Mitglieder laden
+  const { data: mitglieder } = await supabaseClient
+    .from('gruppe_mitglieder')
+    .select('athlet_id, profile(id, name)')
+    .eq('gruppe_id', gruppeId)
+    .eq('status', 'aktiv');
+  trainerAthleten = mitglieder || [];
+  // Für jeden Athleten Daten laden
+  for(const m of trainerAthleten) {
+    const aid = m.athlet_id;
+    const [{ data: erg }, { data: bw }] = await Promise.all([
+      supabaseClient.from('ergebnisse').select('*').eq('nutzer_id', aid).order('datum', { ascending: false }),
+      supabaseClient.from('bewertungen').select('*').eq('nutzer_id', aid).order('datum', { ascending: false }),
+    ]);
+    m.ergebnisse = erg || [];
+    m.bewertungen = bw || [];
+  }
+  renderTrainerAthleten();
+  document.getElementById('trainer-athleten-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function renderTrainerAthleten() {
+  const list = document.getElementById('trainer-athleten-list');
+  if(!trainerAthleten.length) {
+    list.innerHTML = '<div class="empty">Noch keine Athleten in dieser Gruppe.</div>';
+    return;
+  }
+  const vonDatum = getZeitraumDatum(aktiverZeitraum);
+  list.innerHTML = trainerAthleten.map((m, idx) => {
+    const name = m.profile?.name || 'Unbekannt';
+    const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 2);
+    // Ergebnisse filtern
+    const erg = vonDatum
+      ? m.ergebnisse.filter(e => e.datum >= vonDatum)
+      : m.ergebnisse;
+    const bw = vonDatum
+      ? m.bewertungen.filter(b => b.datum >= vonDatum)
+      : m.bewertungen;
+    // Disziplinen für Filter
+    const discs = [...new Set(erg.map(e => e.disziplin))];
+    const avgBel = bw.length ? (bw.reduce((s,b) => s+b.belastung, 0)/bw.length).toFixed(1) : '–';
+    const avgEn = bw.length ? (bw.reduce((s,b) => s+b.energie, 0)/bw.length).toFixed(1) : '–';
+    return `<div class="athlet-card">
+      <div class="athlet-header" onclick="toggleAthletBody(${idx})">
+        <div class="athlet-avatar">${initials}</div>
+        <div>
+          <div class="athlet-name">${name}</div>
+          <div class="athlet-meta">${erg.length} Ergebnisse · ${bw.length} Bewertungen</div>
         </div>
-        ${b.notiz?`<div style="font-size:11px;color:var(--text2);margin-top:2px">${b.notiz}</div>`:''}
+        <div class="athlet-scores">
+          <div class="athlet-score"><div class="athlet-score-val" style="color:${avgBel!=='–'&&parseFloat(avgBel)>=7?'#e05c2a':'var(--text1)'}">${avgBel}</div><div class="athlet-score-lbl">Ø Belast.</div></div>
+          <div class="athlet-score"><div class="athlet-score-val" style="color:${avgEn!=='–'&&parseFloat(avgEn)>=7?'#1D9E75':'var(--text1)'}">${avgEn}</div><div class="athlet-score-lbl">Ø Energie</div></div>
+        </div>
       </div>
-      <div style="display:flex;gap:10px;flex-shrink:0">
-        <div style="text-align:center"><div style="font-size:16px;font-weight:500;color:${bColor}">${b.belastung}</div><div style="font-size:8px;color:var(--text3)">Bel.</div></div>
-        <div style="text-align:center"><div style="font-size:16px;font-weight:500;color:${eColor}">${b.energie}</div><div style="font-size:8px;color:var(--text3)">En.</div></div>
-        <div style="text-align:center"><div style="font-size:16px;font-weight:500;color:var(--green)">${b.gefuehl}</div><div style="font-size:8px;color:var(--text3)">Gef.</div></div>
+      <div class="athlet-body" id="athlet-body-${idx}">
+        ${discs.length ? `<div class="disc-filter">
+          <button class="disc-chip active" onclick="filterDisc(${idx},null,this)">Alle</button>
+          ${discs.map(d => `<button class="disc-chip" onclick="filterDisc(${idx},'${d}',this)">${d}</button>`).join('')}
+        </div>` : ''}
+        <div id="athlet-erg-${idx}">
+          ${erg.length ? erg.slice(0,20).map(e => `
+            <div class="rrow">
+              <div class="rdisc">${e.disziplin.substring(0,3)}</div>
+              <div class="rinfo">
+                <div class="rname">${e.disziplin} <span class="tag ${e.typ==='Wettkampf'?'twk':'ttr'}">${e.typ}</span></div>
+                <div class="rmeta">${e.datum}${e.notizen?' · '+e.notizen:''}</div>
+              </div>
+              <div class="rval">${e.ergebnis}</div>
+            </div>`).join('') : '<div class="empty">Keine Ergebnisse im Zeitraum.</div>'}
+        </div>
+        ${bw.length ? `<div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border)">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:6px">TRAININGS-BEWERTUNGEN</div>
+          ${bw.slice(0,5).map(b => `<div class="bw-entry">
+            <div style="flex:1"><span class="bw-entry-disc">${b.disziplin}</span> <span class="bw-entry-date">${b.datum}</span>${b.notiz?'<div style="font-size:11px;color:var(--text2);margin-top:2px">'+b.notiz+'</div>':''}</div>
+            <div style="display:flex;gap:8px;flex-shrink:0">
+              <div style="text-align:center"><div style="font-size:14px;font-weight:500;color:#e05c2a">${b.belastung}</div><div style="font-size:8px;color:var(--text3)">Bel.</div></div>
+              <div style="text-align:center"><div style="font-size:14px;font-weight:500;color:#1D9E75">${b.energie}</div><div style="font-size:8px;color:var(--text3)">En.</div></div>
+              <div style="text-align:center"><div style="font-size:14px;font-weight:500;color:var(--green)">${b.gefuehl}</div><div style="font-size:8px;color:var(--text3)">Gef.</div></div>
+            </div>
+          </div>`).join('')}
+        </div>` : ''}
       </div>
     </div>`;
   }).join('');
 }
 
+function toggleAthletBody(idx) {
+  const body = document.getElementById('athlet-body-' + idx);
+  body.classList.toggle('open');
+}
+
+function filterDisc(athletIdx, disc, el) {
+  document.querySelectorAll(`#athlet-body-${athletIdx} .disc-chip`).forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  const vonDatum = getZeitraumDatum(aktiverZeitraum);
+  const m = trainerAthleten[athletIdx];
+  let erg = vonDatum ? m.ergebnisse.filter(e => e.datum >= vonDatum) : m.ergebnisse;
+  if(disc) erg = erg.filter(e => e.disziplin === disc);
+  const container = document.getElementById('athlet-erg-' + athletIdx);
+  container.innerHTML = erg.length ? erg.slice(0,20).map(e => `
+    <div class="rrow">
+      <div class="rdisc">${e.disziplin.substring(0,3)}</div>
+      <div class="rinfo">
+        <div class="rname">${e.disziplin} <span class="tag ${e.typ==='Wettkampf'?'twk':'ttr'}">${e.typ}</span></div>
+        <div class="rmeta">${e.datum}${e.notizen?' · '+e.notizen:''}</div>
+      </div>
+      <div class="rval">${e.ergebnis}</div>
+    </div>`).join('') : '<div class="empty">Keine Ergebnisse für diese Disziplin.</div>';
+}
+
+// ── ATHLET: GRUPPE BEITRETEN ─────────────────────────────────────────────
+
+async function loadAthletGruppen() {
+  if(!supabaseClient || !currentUser) return;
+  const { data } = await supabaseClient
+    .from('gruppe_mitglieder')
+    .select('gruppe_id, gruppen(name, trainer_id, profile(name))')
+    .eq('athlet_id', currentUser.id);
+  const list = document.getElementById('athlet-gruppen-list');
+  if(!data || !data.length) {
+    list.innerHTML = '<div class="empty">Du bist noch in keiner Gruppe.</div>';
+    return;
+  }
+  list.innerHTML = data.map(m => `
+    <div class="rrow">
+      <div class="rdisc">GRP</div>
+      <div class="rinfo">
+        <div class="rname">${m.gruppen?.name || 'Gruppe'}</div>
+        <div class="rmeta">Trainer: ${m.gruppen?.profile?.name || '–'}</div>
+      </div>
+    </div>`).join('');
+}
+
+async function joinGruppe() {
+  const code = document.getElementById('join-code').value.trim();
+  if(!code) { alert('Bitte einen Einladungscode eingeben.'); return; }
+  if(!supabaseClient || !currentUser) return;
+  // Gruppe per Code suchen
+  const { data: gruppe } = await supabaseClient
+    .from('gruppen')
+    .select('id, name')
+    .eq('einladungslink', code)
+    .single();
+  if(!gruppe) { alert('Kein gültiger Einladungscode. Prüfe ob du den Code korrekt eingegeben hast.'); return; }
+  // Beitreten
+  const { error } = await supabaseClient
+    .from('gruppe_mitglieder')
+    .insert({ gruppe_id: gruppe.id, athlet_id: currentUser.id, status: 'aktiv' });
+  if(error && error.code !== '23505') { // 23505 = already exists
+    alert('Fehler: ' + error.message); return;
+  }
+  document.getElementById('join-code').value = '';
+  alert('Erfolgreich der Gruppe "' + gruppe.name + '" beigetreten!');
+  await loadAthletGruppen();
+}
+
 async function callClaude(prompt){
-  const d=await apiCall({type:'claude',model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]});
-  return d.content?.[0]?.text||'Fehler.';
+  const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+  const d=await res.json();return d.content?.[0]?.text||'Fehler.';
 }
 function setLoad(el,btn,on,msg='KI analysiert...'){
   if(on){el.innerHTML=`<span class="spin"></span>${msg}`;if(btn)btn.disabled=true;}else{if(btn)btn.disabled=false;}
 }
 
-initSupabase();
 document.getElementById('et-date').valueAsDate=new Date();
-document.getElementById('bw-date').valueAsDate=new Date();
-addAlRow();buildRechnerFields();renderBewertungen();
+addAlRow();buildRechnerFields();
 </script>
 </body>
 </html>

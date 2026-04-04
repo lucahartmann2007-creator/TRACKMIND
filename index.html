@@ -775,6 +775,7 @@ async function loadVereine(){
     if(ids.length){const {data:p}=await supabaseClient.from('profile').select('id,name,rolle').in('id',ids);profiles=p||[];}
     const trainer=profiles.filter(p=>p.rolle==='trainer');
     const athleten=profiles.filter(p=>p.rolle==='athlet');
+    const profilesSorted=[...trainer,...athleten];
     const trainerIds=trainer.map(p=>p.id);
     // Gruppen der Vereins-Trainer laden
     let gruppen=[];
@@ -803,7 +804,7 @@ async function loadVereine(){
             <button class="vf-btn" onclick="filterMitglieder('${vid}','athlet',this)">Athleten</button>
           </div>
           <div id="vmitglieder-${vid}">
-            ${profiles.map(p=>`<div class="member-row" data-rolle="${p.rolle}"><div class="member-avatar">${p.name.substring(0,2).toUpperCase()}</div><div class="member-name">${p.name}</div><span class="rolle-pill ${p.rolle==='trainer'?'rolle-trainer-pill':'rolle-athlet-pill'}">${p.rolle==='trainer'?'Trainer':'Athlet'}</span></div>`).join('')}
+            ${profilesSorted.map(p=>`<div class="member-row" data-rolle="${p.rolle}"><div class="member-avatar">${p.name.substring(0,2).toUpperCase()}</div><div class="member-name">${p.name}</div><span class="rolle-pill ${p.rolle==='trainer'?'rolle-trainer-pill':'rolle-athlet-pill'}">${p.rolle==='trainer'?'Trainer':'Athlet'}</span></div>`).join('')}
           </div>
         </div>
         <div id="vtab-gruppen-${vid}" style="display:none">

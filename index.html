@@ -181,6 +181,18 @@
     .gruppe-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)}
     .gruppe-row:last-child{border-bottom:none}
     .gruppe-disc{width:34px;height:34px;border-radius:8px;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--green-mid);flex-shrink:0}
+
+    /* NOTIFICATION BELL */
+    .notif-btn{position:fixed;top:14px;right:16px;z-index:500;width:36px;height:36px;border-radius:50%;background:var(--card);border:0.5px solid var(--border);display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+    .notif-badge{position:absolute;top:-4px;right:-4px;background:#e53935;color:#fff;border-radius:99px;min-width:18px;height:18px;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg)}
+    .notif-panel{position:fixed;top:58px;right:12px;z-index:499;width:300px;background:var(--card);border:0.5px solid var(--border);border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.12);display:none;overflow:hidden}
+    .notif-header{padding:10px 14px;border-bottom:0.5px solid var(--border);font-size:12px;font-weight:500;color:var(--text1)}
+    .notif-item{padding:10px 14px;border-bottom:0.5px solid var(--border);display:flex;flex-direction:column;gap:6px}
+    .notif-item:last-child{border-bottom:none}
+    .notif-name{font-size:13px;color:var(--text1);font-weight:500}
+    .notif-meta{font-size:11px;color:var(--text2)}
+    .notif-actions{display:flex;gap:6px}
+    .notif-empty{padding:16px 14px;font-size:13px;color:var(--text3);text-align:center}
   </style>
 </head>
 <body>
@@ -474,6 +486,14 @@
       </div>
     </div>
   </div>
+  <button class="notif-btn" id="notif-btn" onclick="toggleNotifPanel()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    <span class="notif-badge" id="notif-badge" style="display:none">0</span>
+  </button>
+  <div class="notif-panel" id="notif-panel">
+    <div class="notif-header">Beitrittsanfragen</div>
+    <div id="notif-list"><div class="notif-empty">Keine offenen Anfragen.</div></div>
+  </div>
 </div>
 <script>
 let results=[],anlaufNotes=[],bewertungen=[],trainerPlanText='';
@@ -536,7 +556,7 @@ async function onLoginSuccess(res){
   if(res.profile)currentProfile=res.profile;
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('main-app').style.display='flex';
-  await loadAllData();updateDashboard();await setupNavForRole();
+  await loadAllData();updateDashboard();await setupNavForRole();loadNotifications().catch(()=>{});
 }
 async function doLogout(){
   try{if(supabaseClient)await supabaseClient.auth.signOut();}catch(e){}
@@ -683,11 +703,11 @@ async function setupNavForRole(){
   document.getElementById('nav-gruppe-section').style.display='none';
   document.getElementById('verein-create-card').style.display='block';
   if(rolle==='trainer'){
-    document.getElementById('nav-trainer').style.display='flex';
+    document.getElementById('nav-trainer').style.display='none';
     document.getElementById('nav-gruppe').style.display='none';
     await loadTrainerGruppen();
   }else{
-    document.getElementById('nav-gruppe').style.display='flex';
+    document.getElementById('nav-gruppe').style.display='none';
     document.getElementById('nav-trainer').style.display='none';
     await loadAthletGruppen();
   }
@@ -763,6 +783,35 @@ async function loadAthletGruppen(){
 }
 async function leaveAthletGruppe(gruppeId){if(!confirm('Gruppe wirklich verlassen?'))return;const {error}=await supabaseClient.from('gruppe_mitglieder').delete().eq('gruppe_id',gruppeId).eq('athlet_id',currentUser.id);if(error){alert('Fehler: '+error.message);return;}await loadAthletGruppen();}
 async function joinGruppe(){const code=document.getElementById('join-code').value.trim();if(!code){alert('Bitte einen Einladungscode eingeben.');return;}const {data:gruppe}=await supabaseClient.from('gruppen').select('id,name').eq('einladungslink',code).single();if(!gruppe){alert('Kein gültiger Einladungscode.');return;}const {error}=await supabaseClient.from('gruppe_mitglieder').insert({gruppe_id:gruppe.id,athlet_id:currentUser.id,status:'aktiv'});if(error&&error.code!=='23505'){alert('Fehler: '+error.message);return;}document.getElementById('join-code').value='';alert('Erfolgreich der Gruppe "'+gruppe.name+'" beigetreten!');await loadAthletGruppen();}
+
+async function loadNotifications(){
+  if(currentProfile?.rolle!=='trainer')return;
+  const {data:gt}=await supabaseClient.from('gruppe_trainer').select('gruppe_id, gruppen(id,name)').eq('trainer_id',currentUser.id);
+  if(!gt||!gt.length){document.getElementById('notif-btn').style.display='none';return;}
+  const gruppenMap={};gt.forEach(({gruppen:g})=>{if(g)gruppenMap[g.id]=g.name;});
+  const gruppenIds=Object.keys(gruppenMap);
+  const {data:anfragen}=await supabaseClient.from('gruppe_anfragen').select('id,gruppe_id,athlet_id,status').in('gruppe_id',gruppenIds).eq('status','pending');
+  const count=(anfragen||[]).length;
+  const btn=document.getElementById('notif-btn');
+  const badge=document.getElementById('notif-badge');
+  btn.style.display='flex';
+  if(count>0){badge.style.display='flex';badge.textContent=count;}
+  else{badge.style.display='none';}
+  if(!count){document.getElementById('notif-list').innerHTML='<div class="notif-empty">Keine offenen Anfragen.</div>';return;}
+  const athletIds=[...new Set(anfragen.map(a=>a.athlet_id))];
+  const {data:profs}=await supabaseClient.from('profile').select('id,name').in('id',athletIds);
+  const profMap={};(profs||[]).forEach(p=>profMap[p.id]=p.name);
+  document.getElementById('notif-list').innerHTML=anfragen.map(a=>`<div class="notif-item"><div><div class="notif-name">${profMap[a.athlet_id]||'Unbekannt'}</div><div class="notif-meta">möchte der Gruppe <strong>${gruppenMap[a.gruppe_id]||'?'}</strong> beitreten</div></div><div class="notif-actions"><button class="copy-btn" style="background:var(--green);color:#fff;border-color:var(--green)" onclick="answerAnfrageNotif('${a.id}','${a.athlet_id}','${a.gruppe_id}','approved')">Annehmen</button><button class="copy-btn" style="color:#c62828;border-color:#ffcdd2" onclick="answerAnfrageNotif('${a.id}','${a.athlet_id}','${a.gruppe_id}','rejected')">Ablehnen</button></div></div>`).join('');
+}
+function toggleNotifPanel(){const panel=document.getElementById('notif-panel');panel.style.display=panel.style.display==='block'?'none':'block';}
+async function answerAnfrageNotif(anfragenId,athletId,gruppeId,decision){
+  await supabaseClient.from('gruppe_anfragen').update({status:decision}).eq('id',anfragenId);
+  if(decision==='approved')await supabaseClient.from('gruppe_mitglieder').insert({gruppe_id:gruppeId,athlet_id:athletId,status:'aktiv'});
+  document.getElementById('notif-panel').style.display='none';
+  await loadNotifications();
+}
+document.addEventListener('click',e=>{const btn=document.getElementById('notif-btn');const panel=document.getElementById('notif-panel');if(btn&&panel&&!btn.contains(e.target)&&!panel.contains(e.target))panel.style.display='none';});
+
 async function createVerein(){const name=document.getElementById('neuer-verein-name').value.trim();if(!name){alert('Bitte einen Vereinsnamen eingeben.');return;}const {data:v,error}=await supabaseClient.from('vereine').insert({name,created_by:currentUser.id}).select().single();if(error){alert('Fehler: '+error.message);return;}await supabaseClient.from('verein_mitglieder').insert({verein_id:v.id,nutzer_id:currentUser.id});document.getElementById('neuer-verein-name').value='';await loadVereine();}
 async function joinVereinByCode(){const code=document.getElementById('verein-join-code').value.trim();if(!code){alert('Bitte einen Code oder Namen eingeben.');return;}const {data:v}=await supabaseClient.from('vereine').select('id,name').eq('einladungslink',code).single();if(!v){alert('Kein gültiger Einladungscode. Nutze die Suche oben um einen Verein nach Namen zu finden.');return;}await doJoinVerein(v.id,v.name);}
 async function doJoinVerein(vereinId,vereinName){const {error}=await supabaseClient.from('verein_mitglieder').insert({verein_id:vereinId,nutzer_id:currentUser.id});if(error&&error.code!=='23505'){alert('Fehler: '+error.message);return;}document.getElementById('verein-join-code').value='';document.getElementById('verein-search-results').style.display='none';alert('Erfolgreich dem Verein "'+vereinName+'" beigetreten!');await loadVereine();}
@@ -892,6 +941,7 @@ async function answerAnfrage(anfragenId,athletId,gruppeId,decision){
   }
   await loadTrainerAnfragen(gruppeId);
   if(decision==='approved')await showGruppeAthleten(gruppeId,document.getElementById('trainer-gruppe-titel').textContent);
+  loadNotifications().catch(()=>{});
 }
 async function requestJoinGruppe(gruppeId,gruppeName){
   const {error}=await supabaseClient.from('gruppe_anfragen').insert({gruppe_id:gruppeId,athlet_id:currentUser.id,status:'pending'});

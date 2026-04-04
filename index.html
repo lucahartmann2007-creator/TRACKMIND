@@ -857,7 +857,7 @@ async function loadVereine(){
         <button class="leave-btn" onclick="leaveVerein('${v.id}')">Verlassen</button>
       </div>
       <div class="verein-body">
-        ${isOwner?`<div style="margin-bottom:10px"><div class="section-lbl">Einladungslink</div><div class="gruppe-link-box"><div style="font-size:13px;font-weight:500;font-family:monospace;flex:1;word-break:break-all">${v.einladungslink}</div><button class="copy-btn" onclick="copyLink('${v.einladungslink}',this)">Code</button><button class="copy-btn" onclick="copyLink('${link}',this)">Link</button></div></div>`:''}
+
         <div class="verein-tabs">
           <button class="verein-tab active" onclick="switchVereinTab('${vid}','mitglieder',this)">Mitglieder (${profiles.length})</button>
           <button class="verein-tab" onclick="switchVereinTab('${vid}','gruppen',this)">Gruppen (${gruppen.length})</button>

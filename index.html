@@ -438,7 +438,7 @@
         <div class="page-title" style="margin-bottom:8px">Offene Beitrittsanfragen</div>
         <div id="trainer-anfragen-list"></div>
       </div>
-      <div id="trainer-athleten-section" style="display:none">
+      <div id="trainer-athleten-section" style="display:none;visibility:hidden;height:0;overflow:hidden">
         <div class="page-title" id="trainer-gruppe-titel" style="margin:14px 0 8px">Athleten</div>
         <div class="tp-filter">
           <button class="tp-filter-btn active" onclick="setZeitraum('30',this)">30 Tage</button>
@@ -690,11 +690,10 @@ function nav(id,el){
   if(id==='einstellungen')updateSettingsPage().catch(()=>{});
   if(id==='verein'){
     loadVereine().catch(()=>{});
-    // Sub-nav Meine Gruppen einblenden
+    // Sub-nav nur für Athleten einblenden
     const subNav=document.getElementById('nav-meine-gruppen');
-    if(subNav)subNav.style.display='flex';
+    if(subNav&&currentProfile?.rolle!=='trainer')subNav.style.display='flex';
   } else {
-    // Sub-nav ausblenden wenn andere Seite
     const subNav=document.getElementById('nav-meine-gruppen');
     if(subNav&&id!=='gruppe')subNav.style.display='none';
   }
@@ -793,6 +792,7 @@ async function setupNavForRole(){
   if(rolle==='trainer'){
     document.getElementById('nav-trainer').style.display='flex';
     document.getElementById('nav-gruppe').style.display='none';
+    document.getElementById('nav-meine-gruppen').style.display='none';
     // Athleten-Nav verstecken für Trainer
     athleteNavIds.forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
     await loadTrainerGruppen();
@@ -816,20 +816,46 @@ async function loadTrainerGruppen(){
   list.innerHTML=gt.map(({gruppen:g})=>{
     if(!g)return'';
     const code=g.einladungslink,link=window.location.origin+'?join='+code;
+    const gid='g'+g.id.replace(/-/g,'').substring(0,8);
     return`<div class="gruppe-card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <div class="gruppe-name" style="margin-bottom:0">${g.name}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div class="gruppe-name" style="margin-bottom:0;cursor:pointer" onclick="toggleTrainerGruppeBody('${gid}','${g.id}','${g.name}')">${g.name}</div>
         <button class="leave-btn" onclick="leaveGruppe('${g.id}')">Verlassen</button>
       </div>
       <div style="font-size:10px;color:var(--text3);margin-bottom:4px">EINLADUNGSCODE</div>
-      <div class="gruppe-link-box" style="margin-bottom:6px">
+      <div class="gruppe-link-box" style="margin-bottom:8px">
         <div style="font-size:13px;font-weight:500;font-family:monospace;flex:1">${code}</div>
         <button class="copy-btn" onclick="copyLink('${code}',this)">Code</button>
         <button class="copy-btn" onclick="copyLink('${link}',this)">Link</button>
       </div>
-      <button class="btn-o" style="margin-top:0" onclick="showGruppeAthleten('${g.id}','${g.name}')">Athleten anzeigen &rarr;</button>
+      <button class="btn-o" style="margin-top:0" onclick="toggleTrainerGruppeBody('${gid}','${g.id}','${g.name}')">Athleten anzeigen &darr;</button>
+      <div id="tgbody-${gid}" style="display:none;margin-top:10px;border-top:0.5px solid var(--border);padding-top:10px">
+        <div class="tp-filter" id="tgfilter-${gid}">
+          <button class="tp-filter-btn active" onclick="setZeitraum('30',this)">30 Tage</button>
+          <button class="tp-filter-btn" onclick="setZeitraum('180',this)">6 Monate</button>
+          <button class="tp-filter-btn" onclick="setZeitraum('365',this)">1 Jahr</button>
+          <button class="tp-filter-btn" onclick="setZeitraum('saison',this)">Diese Saison</button>
+          <button class="tp-filter-btn" onclick="setZeitraum('all',this)">Gesamt</button>
+        </div>
+        <div id="tgathleten-${gid}"><div class="empty">Wird geladen...</div></div>
+      </div>
     </div>`;
   }).join('');
+}
+
+async function toggleTrainerGruppeBody(gid, gruppeId, gruppeName){
+  const body=document.getElementById('tgbody-'+gid);
+  const isOpen=body.style.display!=='none';
+  // Alle anderen schließen
+  document.querySelectorAll('[id^="tgbody-"]').forEach(b=>{b.style.display='none';});
+  if(isOpen){return;}
+  body.style.display='block';
+  // Athleten laden
+  await showGruppeAthleten(gruppeId, gruppeName);
+  // Ergebnisse in die neue Inline-Ansicht übertragen
+  const src=document.getElementById('trainer-athleten-list');
+  const dst=document.getElementById('tgathleten-'+gid);
+  if(src&&dst)dst.innerHTML=src.innerHTML;
 }
 async function leaveGruppe(gruppeId){if(!confirm('Gruppe wirklich verlassen?'))return;const {error}=await supabaseClient.from('gruppe_trainer').delete().eq('gruppe_id',gruppeId).eq('trainer_id',currentUser.id);if(error){alert('Fehler: '+error.message);return;}await loadTrainerGruppen();}
 function copyLink(link,btn){navigator.clipboard.writeText(link).then(()=>{btn.textContent='Kopiert!';setTimeout(()=>{btn.textContent=link.length>20?'Code':'Kopieren';},2000);});}

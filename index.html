@@ -211,7 +211,19 @@
       <button class="btn-p" id="login-btn" onclick="doLogin()">Einloggen</button>
     </div>
     <div id="auth-register-form" style="display:none">
-      <div class="ig" style="margin-bottom:10px"><div class="il">Name</div><input type="text" id="reg-name" placeholder="Dein Name"/></div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <div class="ig" style="flex:1"><div class="il">Vorname</div><input type="text" id="reg-vorname" placeholder="Max"/></div>
+        <div class="ig" style="flex:1"><div class="il">Nachname</div><input type="text" id="reg-nachname" placeholder="Mustermann"/></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <div class="ig" style="flex:1"><div class="il">Jahrgang</div><input type="number" id="reg-jahrgang" placeholder="2005" min="1950" max="2020"/></div>
+        <div class="ig" style="flex:1"><div class="il">Geschlecht</div>
+          <select id="reg-geschlecht" style="font-size:13px;color:var(--text1);background:var(--bg3);border:none;border-radius:7px;padding:8px 10px;outline:none;width:100%;font-family:inherit">
+            <option value="männlich">Männlich</option>
+            <option value="weiblich">Weiblich</option>
+          </select>
+        </div>
+      </div>
       <div class="ig" style="margin-bottom:10px"><div class="il">E-Mail</div><input type="email" id="reg-email" placeholder="deine@email.de"/></div>
       <div class="ig" style="margin-bottom:10px"><div class="il">Passwort</div><input type="password" id="reg-password" placeholder="mind. 6 Zeichen"/></div>
       <div class="il" style="margin-bottom:6px">Ich bin...</div>
@@ -230,15 +242,15 @@
         <svg id="mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
     </div>
-    <div class="nav-section">Athlet</div>
+    <div class="nav-section" id="nav-athlet-section">Athlet</div>
     <div class="nav-item active" onclick="nav('dashboard',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</div>
-    <div class="nav-item" onclick="nav('eintragen',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Eintragen</div>
-    <div class="nav-item" onclick="nav('anlaeufe',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Anl&#228;ufe</div>
-    <div class="nav-item" onclick="nav('analyse',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analyse</div>
-    <div class="nav-section">Training</div>
-    <div class="nav-item" onclick="nav('training',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Trainingsplan</div>
-    <div class="nav-item" onclick="nav('bewertung',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Einheit bewerten</div>
-    <div class="nav-item" onclick="nav('upload',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Plan hochladen</div>
+    <div class="nav-item" id="nav-eintragen" onclick="nav('eintragen',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Eintragen</div>
+    <div class="nav-item" id="nav-anlaeufe" onclick="nav('anlaeufe',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Anl&#228;ufe</div>
+    <div class="nav-item" id="nav-analyse" onclick="nav('analyse',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analyse</div>
+    <div class="nav-section" id="nav-training-section">Training</div>
+    <div class="nav-item" id="nav-training" onclick="nav('training',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Trainingsplan</div>
+    <div class="nav-item" id="nav-bewertung" onclick="nav('bewertung',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Einheit bewerten</div>
+    <div class="nav-item" id="nav-upload" onclick="nav('upload',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Plan hochladen</div>
     <div id="nav-verein-section" class="nav-section" style="display:none">Verein</div>
     <div id="nav-verein" class="nav-item" style="display:none" onclick="nav('verein',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Mein Verein</div>
     <div id="nav-gruppe-section" class="nav-section" style="display:none"></div>
@@ -251,19 +263,31 @@
   </div>
   <div class="main">
     <div id="page-dashboard" class="page active">
-      <div class="page-title">Dashboard</div><div class="page-sub">Deine aktuelle Saison</div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">Eintr&#228;ge</div><div class="metric-value" id="db-count">0</div><div class="metric-sub">Ergebnisse</div></div>
-        <div class="metric"><div class="metric-label">Bestes Ergebnis</div><div class="metric-value" id="db-best">&#8211;</div><div class="metric-sub" id="db-best-disc">kein Eintrag</div></div>
-        <div class="metric"><div class="metric-label">Letzte Disziplin</div><div class="metric-value" id="db-last-disc" style="font-size:13px;padding-top:4px">&#8211;</div><div class="metric-sub" id="db-last-val">&#8211;</div></div>
+      <!-- ATHLET DASHBOARD -->
+      <div id="db-athlet-view">
+        <div class="page-title">Dashboard</div><div class="page-sub">Deine aktuelle Saison</div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">Eintr&#228;ge</div><div class="metric-value" id="db-count">0</div><div class="metric-sub">Ergebnisse</div></div>
+          <div class="metric"><div class="metric-label">Bestes Ergebnis</div><div class="metric-value" id="db-best">&#8211;</div><div class="metric-sub" id="db-best-disc">kein Eintrag</div></div>
+          <div class="metric"><div class="metric-label">Letzte Disziplin</div><div class="metric-value" id="db-last-disc" style="font-size:13px;padding-top:4px">&#8211;</div><div class="metric-sub" id="db-last-val">&#8211;</div></div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">&#216; Belastung (7 Tage)</div><div class="metric-value" id="db-bw-belastung">&#8211;</div><div class="metric-sub">von 10</div></div>
+          <div class="metric"><div class="metric-label">&#216; Energie (7 Tage)</div><div class="metric-value" id="db-bw-energie">&#8211;</div><div class="metric-sub">von 10</div></div>
+          <div class="metric"><div class="metric-label">Einheiten bewertet</div><div class="metric-value" id="db-bw-count">0</div><div class="metric-sub">gesamt</div></div>
+        </div>
+        <div class="card"><div class="card-title">Letzte Ergebnisse</div><div id="db-results"><div class="empty">Noch keine Ergebnisse.</div></div></div>
+        <div class="card" id="tp-card" style="display:none"><div class="card-title">Trainingsplan vom Trainer</div><div class="ai-content" id="tp-content" style="color:var(--text1)"></div></div>
       </div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">&#216; Belastung (7 Tage)</div><div class="metric-value" id="db-bw-belastung">&#8211;</div><div class="metric-sub">von 10</div></div>
-        <div class="metric"><div class="metric-label">&#216; Energie (7 Tage)</div><div class="metric-value" id="db-bw-energie">&#8211;</div><div class="metric-sub">von 10</div></div>
-        <div class="metric"><div class="metric-label">Einheiten bewertet</div><div class="metric-value" id="db-bw-count">0</div><div class="metric-sub">gesamt</div></div>
+      <!-- TRAINER DASHBOARD -->
+      <div id="db-trainer-view" style="display:none">
+        <div class="page-title">Trainer Dashboard</div><div class="page-sub">&#220;bersicht deiner Gruppen &amp; Athleten</div>
+        <div class="metrics" style="margin-bottom:14px">
+          <div class="metric"><div class="metric-label">Meine Gruppen</div><div class="metric-value" id="tr-db-gruppen">0</div><div class="metric-sub">aktiv</div></div>
+          <div class="metric"><div class="metric-label">Athleten gesamt</div><div class="metric-value" id="tr-db-athleten">0</div><div class="metric-sub">in meinen Gruppen</div></div>
+        </div>
+        <div id="tr-db-gruppen-list"><div class="empty">Noch keine Gruppen.</div></div>
       </div>
-      <div class="card"><div class="card-title">Letzte Ergebnisse</div><div id="db-results"><div class="empty">Noch keine Ergebnisse.</div></div></div>
-      <div class="card" id="tp-card" style="display:none"><div class="card-title">Trainingsplan vom Trainer</div><div class="ai-content" id="tp-content" style="color:var(--text1)"></div></div>
     </div>
     <div id="page-eintragen" class="page">
       <div class="page-title">Ergebnis eintragen</div><div class="page-sub">Alle Disziplinen &#8211; manuell</div>
@@ -486,6 +510,34 @@
       </div>
     </div>
   </div>
+  <!-- TRAINER ATHLET DETAIL MODAL -->
+  <div id="athlet-modal" style="display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,0.4)" onclick="if(event.target===this)closeAthletModal()">
+    <div style="position:absolute;right:0;top:0;bottom:0;width:min(420px,100%);background:var(--bg);overflow-y:auto;padding:20px;box-shadow:-4px 0 20px rgba(0,0,0,0.15)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div id="modal-athlet-title" style="font-size:16px;font-weight:500;color:var(--text1)"></div>
+        <button onclick="closeAthletModal()" style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:20px;line-height:1">&times;</button>
+      </div>
+      <div class="tabs" style="margin-bottom:12px">
+        <div class="tab active" onclick="switchModalTab('ergebnisse',this)">Ergebnisse</div>
+        <div class="tab" onclick="switchModalTab('belastung',this)">Belastung</div>
+      </div>
+      <div id="modal-tab-ergebnisse">
+        <div id="modal-ergebnisse-list"><div class="empty">Wird geladen...</div></div>
+      </div>
+      <div id="modal-tab-belastung" style="display:none">
+        <div class="bw-summary" style="margin-bottom:12px">
+          <div class="bw-summary-item"><div class="bw-summary-val" id="modal-avg-bel">–</div><div class="bw-summary-lbl">Ø Belastung</div></div>
+          <div class="bw-summary-item"><div class="bw-summary-val" id="modal-avg-en">–</div><div class="bw-summary-lbl">Ø Energie</div></div>
+          <div class="bw-summary-item"><div class="bw-summary-val" id="modal-avg-gef">–</div><div class="bw-summary-lbl">Ø Gefühl</div></div>
+        </div>
+        <div id="modal-trend-wrap" style="display:none;margin-bottom:12px">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:4px">Letzte 10 Einheiten — Belastung</div>
+          <div id="modal-trend-chart" class="trend-row"></div>
+        </div>
+        <div id="modal-bewertungen-list"><div class="empty">Wird geladen...</div></div>
+      </div>
+    </div>
+  </div>
   <button class="notif-btn" id="notif-btn" onclick="toggleNotifPanel()">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
     <span class="notif-badge" id="notif-badge" style="display:none">0</span>
@@ -503,6 +555,22 @@ let supabaseClient=null;
 let aktiveGruppeId=null,aktiverZeitraum='30',trainerAthleten=[];
 const SUPA_URL='https://vpfxcdjagqtgduieyunr.supabase.co';
 const SUPA_KEY='sb_publishable_fLMpBCUkFIN4YlEoEZ3ZAg_g5rieJJI';
+
+function calcAltersklasse(jahrgang, geschlecht){
+  if(!jahrgang)return'';
+  const age=new Date().getFullYear()-jahrgang;
+  const g=geschlecht==='weiblich'?'weiblich':'männlich';
+  if(age<=13)return'U14 '+g;
+  if(age<=15)return'U16 '+g;
+  if(age<=17)return'U18 '+g;
+  if(age<=19)return'U20 '+g;
+  if(age<=22)return'U23 '+g;
+  return'Aktive '+g;
+}
+function getInitials(vorname,nachname){
+  const v=(vorname||'').trim();const n=(nachname||'').trim();
+  return((v[0]||'')+(n[0]||'')).toUpperCase()||'?';
+}
 function initSupabase(){if(window.supabase&&SUPA_URL&&SUPA_KEY)supabaseClient=window.supabase.createClient(SUPA_URL,SUPA_KEY);}
 function switchAuthTab(tab){
   const l=tab==='login';
@@ -531,12 +599,16 @@ async function doLogin(){
   }catch(e){showAuthError('Fehler: '+e.message);btn.disabled=false;btn.textContent='Einloggen';}
 }
 async function doRegister(){
-  const name=document.getElementById('reg-name').value.trim(),email=document.getElementById('reg-email').value.trim(),password=document.getElementById('reg-password').value;
-  if(!name||!email||!password){showAuthError('Bitte alle Felder ausfüllen.');return;}
+  const vorname=document.getElementById('reg-vorname').value.trim(),nachname=document.getElementById('reg-nachname').value.trim();
+  const name=(vorname+' '+nachname).trim();
+  const jahrgang=parseInt(document.getElementById('reg-jahrgang').value)||null;
+  const geschlecht=document.getElementById('reg-geschlecht').value;
+  const email=document.getElementById('reg-email').value.trim(),password=document.getElementById('reg-password').value;
+  if(!vorname||!nachname||!email||!password){showAuthError('Bitte alle Felder ausfüllen.');return;}
   if(password.length<6){showAuthError('Passwort muss mind. 6 Zeichen haben.');return;}
   const btn=document.getElementById('register-btn');btn.disabled=true;btn.textContent='Wird erstellt...';
   try{
-    const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:{name,rolle:selectedRolle}}});
+    const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:{name,vorname,nachname,rolle:selectedRolle,jahrgang,geschlecht}}});
     if(error){showAuthError(error.message);btn.disabled=false;btn.textContent='Konto erstellen';return;}
     if(!data.user?.id){showAuthError('Kein User erstellt.');btn.disabled=false;btn.textContent='Konto erstellen';return;}
     if(!data.session){
@@ -575,10 +647,13 @@ async function ensureProfile(){
     if(prof&&prof.name){currentProfile=prof;return;}
     // Profil fehlt oder hat keinen Namen – aus Auth-Metadaten erstellen
     const meta=currentUser.user_metadata||{};
-    const name=meta.name||currentUser.email?.split('@')[0]||'Nutzer';
+    const vorname=meta.vorname||'';const nachname=meta.nachname||'';
+    const name=meta.name||(vorname+' '+nachname).trim()||currentUser.email?.split('@')[0]||'Nutzer';
     const rolle=meta.rolle||'athlet';
-    await supabaseClient.from('profile').upsert({id:currentUser.id,name,rolle},{onConflict:'id'});
-    currentProfile={id:currentUser.id,name,rolle};
+    const jahrgang=meta.jahrgang?parseInt(meta.jahrgang):null;
+    const geschlecht=meta.geschlecht||'männlich';
+    await supabaseClient.from('profile').upsert({id:currentUser.id,name,vorname,nachname,rolle,jahrgang,geschlecht},{onConflict:'id'});
+    currentProfile={id:currentUser.id,name,vorname,nachname,rolle,jahrgang,geschlecht};
   }catch(e){console.log('ensureProfile:',e.message);}
 }
 async function restoreSession(){
@@ -625,6 +700,15 @@ function nav(id,el){
   }
 }
 function updateDashboard(){
+  const rolle=currentProfile?.rolle;
+  if(rolle==='trainer'){
+    document.getElementById('db-athlet-view').style.display='none';
+    document.getElementById('db-trainer-view').style.display='block';
+    loadTrainerDashboard();return;
+  }
+  document.getElementById('db-athlet-view').style.display='block';
+  document.getElementById('db-trainer-view').style.display='none';
+
   document.getElementById('db-count').textContent=results.length;
   document.getElementById('db-bw-count').textContent=bewertungen.length;
   const now=new Date(),week=7*24*60*60*1000;
@@ -649,7 +733,10 @@ function onDiscChange(){const d=document.getElementById('et-disc').value,isM=d==
 function buildMkFields(disc){const discs=disc==='Zehnkampf'?ZEHN_D:SIEBEN_D,tab=disc==='Zehnkampf'?'zehn':'sieben';const isF=d=>!['100m','200m','400m','800m','1500m','100m Hürden','110m Hürden','400m Hürden'].includes(d);document.getElementById('et-mk-fields').innerHTML=discs.map(d=>`<div class="mki"><div class="mkl">${d}</div><input type="text" class="mk-val" data-disc="${d}" data-tab="${tab}" placeholder="${isF(d)?'m':'s'}" oninput="updateMkTotal()"/><div class="pts-badge" id="ep-${eid(d)}">0 Pkt</div></div>`).join('');}
 function updateMkTotal(){let t=0;document.querySelectorAll('.mk-val').forEach(i=>{const pts=calcPts(i.dataset.disc,i.value,i.dataset.tab);t+=pts;const el=document.getElementById('ep-'+eid(i.dataset.disc));if(el)el.textContent=pts+' Pkt';});document.getElementById('et-mk-total').textContent=t;}
 async function saveResult(){
-  const disc=document.getElementById('et-disc').value,type=document.getElementById('et-type').value,ak=document.getElementById('et-ak').value,date=document.getElementById('et-date').value||new Date().toISOString().split('T')[0],notes=document.getElementById('et-notes').value.trim();
+  const disc=document.getElementById('et-disc').value,type=document.getElementById('et-type').value;
+  const akAuto=calcAltersklasse(currentProfile?.jahrgang,currentProfile?.geschlecht);
+  const akEl=document.getElementById('et-ak');if(akAuto&&akEl)akEl.value=akAuto.includes('männlich')||akAuto.includes('weiblich')?akAuto:akEl.value;
+  const ak=akAuto||document.getElementById('et-ak').value,date=document.getElementById('et-date').value||new Date().toISOString().split('T')[0],notes=document.getElementById('et-notes').value.trim();
   const isM=disc==='Zehnkampf'||disc==='Siebenkampf';const toSave=[];
   if(isM){toSave.push({disc,type,result:document.getElementById('et-mk-total').textContent+' Pkt',date,ak,notes});document.querySelectorAll('.mk-val').forEach(i=>{const v=i.value.trim();if(v)toSave.push({disc:i.dataset.disc,type,result:v,date,ak,notes:'Aus '+disc});});}
   else{const r=document.getElementById('et-result').value.trim();if(!r){alert('Bitte Ergebnis eingeben.');return;}toSave.push({disc,type,result:r,date,ak,notes});}
@@ -702,9 +789,12 @@ async function setupNavForRole(){
   document.getElementById('nav-verein').style.display='flex';
   document.getElementById('nav-gruppe-section').style.display='none';
   document.getElementById('verein-create-card').style.display='block';
+  const athleteNavIds=['nav-eintragen','nav-anlaeufe','nav-analyse','nav-training','nav-bewertung','nav-upload','nav-athlet-section','nav-training-section'];
   if(rolle==='trainer'){
-    document.getElementById('nav-trainer').style.display='none';
+    document.getElementById('nav-trainer').style.display='flex';
     document.getElementById('nav-gruppe').style.display='none';
+    // Athleten-Nav verstecken für Trainer
+    athleteNavIds.forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
     await loadTrainerGruppen();
   }else{
     document.getElementById('nav-gruppe').style.display='none';
@@ -764,7 +854,7 @@ function renderTrainerAthleten(){
   if(!trainerAthleten.length){list.innerHTML='<div class="empty">Noch keine Athleten in dieser Gruppe.</div>';return;}
   const von=getZeitraumDatum(aktiverZeitraum);
   list.innerHTML=trainerAthleten.map((m,idx)=>{
-    const name=m.profile?.name||'Unbekannt';const init=name.split(' ').map(w=>w[0]).join('').toUpperCase().substring(0,2);
+    const name=m.profile?.name||'Unbekannt';const nameParts=name.split(' ');const init=getInitials(nameParts[0]||'',nameParts[1]||'');
     const erg=von?m.ergebnisse.filter(e=>e.datum>=von):m.ergebnisse;const bw=von?m.bewertungen.filter(b=>b.datum>=von):m.bewertungen;
     const discs=[...new Set(erg.map(e=>e.disziplin))];const avgB=bw.length?(bw.reduce((s,b)=>s+b.belastung,0)/bw.length).toFixed(1):'–';const avgE=bw.length?(bw.reduce((s,b)=>s+b.energie,0)/bw.length).toFixed(1):'–';
     return`<div class="athlet-card"><div class="athlet-header" onclick="toggleAthletBody(${idx})"><div class="athlet-avatar">${init}</div><div><div class="athlet-name">${name}</div><div class="athlet-meta">${erg.length} Ergebnisse · ${bw.length} Bewertungen</div></div><div class="athlet-scores"><div class="athlet-score"><div class="athlet-score-val" style="color:${avgB!=='–'&&parseFloat(avgB)>=7?'#e05c2a':'var(--text1)'}">${avgB}</div><div class="athlet-score-lbl">Ø Bel.</div></div><div class="athlet-score"><div class="athlet-score-val" style="color:${avgE!=='–'&&parseFloat(avgE)>=7?'#1D9E75':'var(--text1)'}">${avgE}</div><div class="athlet-score-lbl">Ø En.</div></div></div></div><div class="athlet-body" id="athlet-body-${idx}">${discs.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin:10px 0 8px"><button class="disc-chip active" onclick="filterDisc(${idx},null,this)">Alle</button>${discs.map(d=>`<button class="disc-chip" onclick="filterDisc(${idx},'${d}',this)">${d}</button>`).join('')}</div>`:''}<div id="athlet-erg-${idx}">${erg.length?erg.slice(0,20).map(e=>`<div class="rrow"><div class="rdisc">${e.disziplin.substring(0,3)}</div><div class="rinfo"><div class="rname">${e.disziplin} <span class="tag ${e.typ==='Wettkampf'?'twk':'ttr'}">${e.typ}</span></div><div class="rmeta">${e.datum}${e.notizen?' · '+e.notizen:''}</div></div><div class="rval">${e.ergebnis}</div></div>`).join(''):'<div class="empty">Keine Ergebnisse im Zeitraum.</div>'}</div>${bw.length?`<div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:6px">TRAININGS-BEWERTUNGEN</div>${bw.slice(0,5).map(b=>`<div class="bw-entry"><div style="flex:1"><span style="font-size:12px;font-weight:500">${b.disziplin}</span> <span style="font-size:10px;color:var(--text3)">${b.datum}</span>${b.notiz?'<div style="font-size:11px;color:var(--text2);margin-top:2px">'+b.notiz+'</div>':''}</div><div style="display:flex;gap:8px;flex-shrink:0"><div style="text-align:center"><div style="font-size:14px;font-weight:500;color:#e05c2a">${b.belastung}</div><div style="font-size:8px;color:var(--text3)">Bel.</div></div><div style="text-align:center"><div style="font-size:14px;font-weight:500;color:#1D9E75">${b.energie}</div><div style="font-size:8px;color:var(--text3)">En.</div></div><div style="text-align:center"><div style="font-size:14px;font-weight:500;color:var(--green)">${b.gefuehl}</div><div style="font-size:8px;color:var(--text3)">Gef.</div></div></div></div>`).join('')}</div>`:''}}</div></div>`;
@@ -784,6 +874,108 @@ async function loadAthletGruppen(){
 async function leaveAthletGruppe(gruppeId){if(!confirm('Gruppe wirklich verlassen?'))return;const {error}=await supabaseClient.from('gruppe_mitglieder').delete().eq('gruppe_id',gruppeId).eq('athlet_id',currentUser.id);if(error){alert('Fehler: '+error.message);return;}await loadAthletGruppen();}
 async function joinGruppe(){const code=document.getElementById('join-code').value.trim();if(!code){alert('Bitte einen Einladungscode eingeben.');return;}const {data:gruppe}=await supabaseClient.from('gruppen').select('id,name').eq('einladungslink',code).single();if(!gruppe){alert('Kein gültiger Einladungscode.');return;}const {error}=await supabaseClient.from('gruppe_mitglieder').insert({gruppe_id:gruppe.id,athlet_id:currentUser.id,status:'aktiv'});if(error&&error.code!=='23505'){alert('Fehler: '+error.message);return;}document.getElementById('join-code').value='';alert('Erfolgreich der Gruppe "'+gruppe.name+'" beigetreten!');await loadAthletGruppen();}
 
+
+async function loadTrainerDashboard(){
+  if(!supabaseClient||!currentUser)return;
+  const {data:gt}=await supabaseClient.from('gruppe_trainer').select('gruppe_id, gruppen(id,name)').eq('trainer_id',currentUser.id);
+  if(!gt||!gt.length){document.getElementById('tr-db-gruppen').textContent='0';document.getElementById('tr-db-athleten').textContent='0';return;}
+  document.getElementById('tr-db-gruppen').textContent=gt.length;
+  // (Anfragen werden nur im Notification-Panel angezeigt)
+  // Pro Gruppe Athleten und Bewertungen laden
+  const now=new Date();
+  const week7=new Date(now-7*24*60*60*1000).toISOString().split('T')[0];
+  let totalAthleten=0;
+  const cards=await Promise.all(gt.map(async({gruppen:g})=>{
+    if(!g)return'';
+    const {data:mbs}=await supabaseClient.from('gruppe_mitglieder').select('athlet_id').eq('gruppe_id',g.id).eq('status','aktiv');
+    const ids=(mbs||[]).map(m=>m.athlet_id);totalAthleten+=ids.length;
+    let profiles=[];
+    if(ids.length){const {data:p}=await supabaseClient.from('profile').select('id,name,vorname,nachname,jahrgang,geschlecht').in('id',ids);profiles=p||[];}
+    // Letzte Bewertungen (7 Tage) pro Athlet
+    const bwMap={};
+    if(ids.length){
+      const {data:bws}=await supabaseClient.from('bewertungen').select('nutzer_id,belastung,energie,datum').in('nutzer_id',ids).gte('datum',week7);
+      (bws||[]).forEach(b=>{if(!bwMap[b.nutzer_id])bwMap[b.nutzer_id]=[];bwMap[b.nutzer_id].push(b);});
+    }
+    // Letztes Ergebnis pro Athlet
+    const ergMap={};
+    if(ids.length){
+      const {data:ergs}=await supabaseClient.from('ergebnisse').select('nutzer_id,disziplin,ergebnis,datum').in('nutzer_id',ids).order('datum',{ascending:false}).limit(ids.length*3);
+      (ergs||[]).forEach(e=>{if(!ergMap[e.nutzer_id])ergMap[e.nutzer_id]=e;});
+    }
+    const athletRows=profiles.map(p=>{
+      const bws=bwMap[p.id]||[];
+      const avgBel=bws.length?(bws.reduce((s,b)=>s+b.belastung,0)/bws.length).toFixed(1):null;
+      const ampel=avgBel===null?'var(--text3)':parseFloat(avgBel)>=8?'#e53935':parseFloat(avgBel)>=5?'#f0a500':'#1D9E75';
+      const letztes=ergMap[p.id];
+      const initials=getInitials(p.vorname||p.name?.split(' ')[0]||'',p.nachname||p.name?.split(' ')[1]||'');
+      const ak=calcAltersklasse(p.jahrgang,p.geschlecht);
+      return`<div class="rrow" style="cursor:pointer" onclick="showTrainerAthletDetail('${p.id}','${(p.name||'').replace(/'/g,'')}')" title="Statistiken anzeigen"><div class="rdisc">${initials}</div><div class="rinfo"><div class="rname">${p.name||'Unbekannt'}</div><div class="rmeta">${ak||''}${letztes?' · '+letztes.disziplin+': '+letztes.ergebnis:''}</div></div><div style="display:flex;align-items:center;gap:10px"><div style="text-align:center;min-width:40px"><div style="font-size:16px;font-weight:500;color:${ampel}">${avgBel||'–'}</div><div style="font-size:8px;color:var(--text3)">Ø Bel.</div></div><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div></div>`;
+    }).join('')||'<div class="empty" style="padding:12px 0">Keine Athleten.</div>';
+    return`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div class="card-title" style="margin-bottom:0">${g.name}</div><span style="font-size:11px;color:var(--text2)">${ids.length} Athleten</span></div>${athletRows}</div>`;
+  }));
+  document.getElementById('tr-db-athleten').textContent=totalAthleten;
+  document.getElementById('tr-db-gruppen-list').innerHTML=cards.join('')||'<div class="empty">Keine Gruppen.</div>';
+}
+
+async function showTrainerAthletDetail(athletId, athletName){
+  document.getElementById('modal-athlet-title').textContent=athletName;
+  document.getElementById('athlet-modal').style.display='block';
+  document.body.style.overflow='hidden';
+  // Reset tabs
+  document.querySelectorAll('#athlet-modal .tab').forEach((t,i)=>{t.classList.toggle('active',i===0);});
+  document.getElementById('modal-tab-ergebnisse').style.display='block';
+  document.getElementById('modal-tab-belastung').style.display='none';
+  document.getElementById('modal-ergebnisse-list').innerHTML='<div class="empty">Wird geladen...</div>';
+  document.getElementById('modal-bewertungen-list').innerHTML='<div class="empty">Wird geladen...</div>';
+  // Daten laden
+  const [{data:ergs},{data:bws}]=await Promise.all([
+    supabaseClient.from('ergebnisse').select('*').eq('nutzer_id',athletId).order('datum',{ascending:false}).limit(30),
+    supabaseClient.from('bewertungen').select('*').eq('nutzer_id',athletId).order('datum',{ascending:false}).limit(20),
+  ]);
+  // Ergebnisse
+  if(!ergs||!ergs.length){document.getElementById('modal-ergebnisse-list').innerHTML='<div class="empty">Noch keine Ergebnisse.</div>';}
+  else{
+    // Gruppiert nach Disziplin — beste Leistung zuerst
+    const byDisc={};
+    ergs.forEach(e=>{if(!byDisc[e.disziplin])byDisc[e.disziplin]=[];byDisc[e.disziplin].push(e);});
+    document.getElementById('modal-ergebnisse-list').innerHTML=
+      Object.entries(byDisc).map(([disc,es])=>{
+        return`<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px">${disc}</div>`+
+        es.map(e=>`<div class="rrow"><div class="rdisc" style="font-size:8px">${e.typ==='Wettkampf'?'WK':'TR'}</div><div class="rinfo"><div class="rname">${e.ergebnis}</div><div class="rmeta">${e.datum}${e.notizen?' · '+e.notizen:''}</div></div><span class="tag ${e.typ==='Wettkampf'?'twk':'ttr'}">${e.typ}</span></div>`).join('')+
+        '</div>';
+      }).join('');
+  }
+  // Belastung
+  if(!bws||!bws.length){
+    document.getElementById('modal-bewertungen-list').innerHTML='<div class="empty">Noch keine Bewertungen.</div>';
+    ['modal-avg-bel','modal-avg-en','modal-avg-gef'].forEach(id=>document.getElementById(id).textContent='–');
+    document.getElementById('modal-trend-wrap').style.display='none';
+  } else {
+    const avg=k=>(bws.reduce((s,b)=>s+b[k],0)/bws.length).toFixed(1);
+    document.getElementById('modal-avg-bel').textContent=avg('belastung');
+    document.getElementById('modal-avg-en').textContent=avg('energie');
+    document.getElementById('modal-avg-gef').textContent=avg('gefuehl');
+    const last10=bws.slice(0,10);
+    document.getElementById('modal-trend-wrap').style.display='block';
+    document.getElementById('modal-trend-chart').innerHTML=last10.map(b=>{
+      const bc=b.belastung>=8?'#e53935':b.belastung>=5?'#f0a500':'#1D9E75';
+      return`<div class="trend-col"><div style="height:${Math.round(b.belastung/10*34)}px;width:10px;background:${bc};opacity:0.85;border-radius:2px 2px 0 0;margin-top:auto"></div><div class="trend-lbl">${b.disziplin?.substring(0,3)||''}</div></div>`;
+    }).join('');
+    document.getElementById('modal-bewertungen-list').innerHTML=bws.map(b=>{
+      const bc=b.belastung>=8?'#e53935':b.belastung>=5?'#f0a500':'#1D9E75';
+      const ec=b.energie>=7?'#1D9E75':b.energie>=4?'#f0a500':'#e53935';
+      return`<div class="bw-entry"><div style="flex:1"><span style="font-size:12px;font-weight:500">${b.disziplin}</span> <span style="font-size:10px;color:var(--text3)">${b.datum}</span>${b.notiz?'<div style="font-size:11px;color:var(--text2);margin-top:2px">'+b.notiz+'</div>':''}</div><div style="display:flex;gap:8px;flex-shrink:0"><div style="text-align:center"><div style="font-size:14px;font-weight:500;color:${bc}">${b.belastung}</div><div style="font-size:8px;color:var(--text3)">Bel.</div></div><div style="text-align:center"><div style="font-size:14px;font-weight:500;color:${ec}">${b.energie}</div><div style="font-size:8px;color:var(--text3)">En.</div></div><div style="text-align:center"><div style="font-size:14px;font-weight:500;color:var(--green)">${b.gefuehl}</div><div style="font-size:8px;color:var(--text3)">Gef.</div></div></div></div>`;
+    }).join('');
+  }
+}
+function closeAthletModal(){document.getElementById('athlet-modal').style.display='none';document.body.style.overflow='';}
+function switchModalTab(tab,el){
+  document.querySelectorAll('#athlet-modal .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('modal-tab-ergebnisse').style.display=tab==='ergebnisse'?'block':'none';
+  document.getElementById('modal-tab-belastung').style.display=tab==='belastung'?'block':'none';
+}
 async function loadNotifications(){
   if(currentProfile?.rolle!=='trainer')return;
   const {data:gt}=await supabaseClient.from('gruppe_trainer').select('gruppe_id, gruppen(id,name)').eq('trainer_id',currentUser.id);
